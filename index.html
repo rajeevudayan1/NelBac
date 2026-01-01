@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nelbac IoT | Automate Anything</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #01040a;
+            --bg-secondary: #020617;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --accent-solid: #00f3ff;
+            --glass-bg: rgba(255, 255, 255, 0.01);
+            --border-primary: rgba(0, 243, 255, 0.15);
+            --border-secondary: rgba(0, 243, 255, 0.05);
+            --nelbac-accent: #00f3ff;
+            --bg-img-brightness: 0.35;
+            --overlay-text: #ffffff;
+            --vision-card-bg: rgba(255, 255, 255, 0.03);
+            --vision-card-text: #ffffff;
+            --vision-card-secondary: #94a3b8;
+            --vision-card-glow: 0 0 30px rgba(0, 243, 255, 0.1);
+            --vision-card-border: rgba(0, 243, 255, 0.2);
+            --heading-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        html.light {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --accent-solid: #0369a1; 
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --border-primary: rgba(15, 23, 42, 0.12);
+            --border-secondary: rgba(15, 23, 42, 0.06);
+            --bg-img-brightness: 0.85; 
+            --overlay-text: #0f172a;
+            --vision-card-bg: rgba(0, 0, 0, 0.45); 
+            --vision-card-text: #ffffff;
+            --vision-card-secondary: #e2e8f0;
+            --vision-card-glow: 0 30px 60px -12px rgba(0, 0, 0, 0.4), 0 0 50px rgba(0, 243, 255, 0.6);
+            --vision-card-border: rgba(0, 243, 255, 0.8);
+            --heading-shadow: 0 0 20px rgba(255,255,255,0.4);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            scroll-behavior: smooth;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        h1, h2, h3, .font-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.05em;
+        }
+
+        /* CUSTOM CURSOR - HYBRID DOT */
+        #cursor-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--nelbac-accent);
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 10px var(--nelbac-accent), 0 0 20px var(--nelbac-accent);
+            transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+                        height 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+                        background 0.2s, 
+                        border 0.2s,
+                        box-shadow 0.2s;
+            will-change: transform;
+        }
+
+        .cursor-hover #cursor-dot {
+            width: 14px;
+            height: 14px;
+            background: transparent;
+            border: 2px solid var(--nelbac-accent);
+            box-shadow: 0 0 15px var(--nelbac-accent);
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-primary);
+        }
+
+        /* RESTORED VISION SECTION STYLES */
+        .vision-card {
+            background: var(--vision-card-bg) !important;
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid var(--vision-card-border);
+            box-shadow: var(--vision-card-glow);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            color: var(--vision-card-text) !important;
+        }
+
+        .vision-card p {
+            color: var(--vision-card-secondary) !important;
+        }
+
+        .vision-card .index-text {
+            color: var(--vision-card-secondary) !important;
+            opacity: 0.7 !important;
+        }
+
+        .vision-heading-box {
+            position: relative;
+            padding: 2rem;
+            margin-left: -2rem;
+            border-radius: 2rem;
+            background: radial-gradient(circle at left, rgba(0,0,0,0.4) 0%, transparent 70%);
+        }
+
+        html.light .vision-heading-box {
+            background: radial-gradient(circle at left, rgba(255,255,255,0.3) 0%, transparent 70%);
+        }
+
+        .vision-heading-box h2 {
+            text-shadow: var(--heading-shadow);
+        }
+
+        .glow-link {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glow-link:hover {
+            color: var(--nelbac-accent) !important;
+            transform: translateX(8px);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--text-primary) 20%, var(--nelbac-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-grid-container {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            perspective: 1200px;
+            overflow: hidden;
+        }
+
+        .grid-3d-floor {
+            position: absolute;
+            width: 400%;
+            height: 400%;
+            top: 30%;
+            left: -150%;
+            background-image: 
+                linear-gradient(var(--nelbac-accent) 1px, transparent 1px),
+                linear-gradient(90deg, var(--nelbac-accent) 1px, transparent 1px);
+            background-size: 35px 35px;
+            transform: rotateX(75deg);
+            transform-origin: top center;
+            opacity: 0.3;
+            animation: grid-move 15s linear infinite;
+            mask-image: radial-gradient(ellipse at center, black 10%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 10%, transparent 70%);
+        }
+
+        @keyframes grid-move {
+            0% { transform: rotateX(75deg) translateY(0); }
+            100% { transform: rotateX(75deg) translateY(35px); }
+        }
+
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(to right, var(--nelbac-accent), #3b82f6);
+            z-index: 1000;
+            box-shadow: 0 0 10px var(--nelbac-accent);
+        }
+
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-on-scroll.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .animate-float {
+            animation: float 5s ease-in-out infinite;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+  }
+}
+</script>
+</head>
+<body class="antialiased overflow-x-hidden">
+    <div id="cursor-dot"></div>
+    <div class="scroll-progress" id="scroll-bar"></div>
+    <div id="root"></div>
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.documentElement.classList.add('light');
+        }
+
+        const dot = document.getElementById('cursor-dot');
+        let mouseX = 0;
+        let mouseY = 0;
+        let dotX = 0;
+        let dotY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            const target = e.target;
+            const interactiveEl = target.closest('a, button, .interactive, .glow-link');
+            if (interactiveEl) {
+                document.body.classList.add('cursor-hover');
+            } else {
+                document.body.classList.remove('cursor-hover');
+            }
+        });
+
+        const animateCursor = () => {
+            const easing = 0.15;
+            dotX += (mouseX - dotX) * easing;
+            dotY += (mouseY - dotY) * easing;
+            const isHover = document.body.classList.contains('cursor-hover');
+            const offset = isHover ? 7 : 4;
+            dot.style.transform = `translate3d(${dotX - offset}px, ${dotY - offset}px, 0)`;
+            requestAnimationFrame(animateCursor);
+        };
+        animateCursor();
+
+        window.onscroll = function() {
+            var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            var scrolled = (winScroll / height) * 100;
+            const bar = document.getElementById("scroll-bar");
+            if (bar) bar.style.width = scrolled + "%";
+
+            const reveals = document.querySelectorAll('.reveal-on-scroll');
+            reveals.forEach(el => {
+                const windowHeight = window.innerHeight;
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 50) {
+                    el.classList.add('active');
+                }
+            });
+        };
+    </script>
+</body>
+</html>
