@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Product } from '../types';
 
 interface ProductCardProps {
@@ -8,6 +8,8 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
+  const [videoError, setVideoError] = useState(false);
+
   return (
     <div className="card-3d group relative flex flex-col h-full bg-[var(--text-primary)]/5 border border-[var(--border-secondary)] rounded-[2.5rem] p-1.5 transition-all hover:border-[#00f3ff]/40 hover:bg-[var(--text-primary)]/10">
       {/* Immersive Visual Container */}
@@ -15,16 +17,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         <img 
           src={product.image} 
           alt={product.name} 
-          className={`w-full h-full object-cover transition-all duration-[1s] group-hover:scale-110 grayscale group-hover:grayscale-0 ${product.video ? 'group-hover:opacity-0' : 'opacity-60 group-hover:opacity-100'}`}
+          className={`w-full h-full object-cover transition-all duration-[1s] group-hover:scale-110 grayscale group-hover:grayscale-0 ${product.video && !videoError ? 'group-hover:opacity-0' : 'opacity-60 group-hover:opacity-100'}`}
         />
         
-        {product.video && (
+        {product.video && !videoError && (
           <video 
             src={product.video} 
             autoPlay 
             loop 
             muted 
             playsInline 
+            onError={() => setVideoError(true)}
             className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-1000 scale-110"
           />
         )}

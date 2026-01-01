@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Page } from '../types';
 
 interface HeroProps {
@@ -7,6 +7,8 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ onExplore }) => {
+  const [videoError, setVideoError] = useState(false);
+
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-20">
       {/* Localized 3D Grid Background */}
@@ -61,15 +63,24 @@ const Hero: React.FC<HeroProps> = ({ onExplore }) => {
               <div className="absolute -inset-4 bg-[#00f3ff]/10 rounded-[3rem] blur-3xl group-hover:bg-[#00f3ff]/20 transition-all"></div>
               
               <div className="relative glass border border-[var(--border-primary)] rounded-[3rem] overflow-hidden aspect-[4/5] shadow-2xl">
-                {/* Loop Video Replacement for Image */}
-                <video 
-                  src="https://cdn.pixabay.com/video/2020/05/25/40134-424919363_large.mp4" 
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-70 group-hover:opacity-100"
-                />
+                {/* Fallback to static image if video fails or is loading */}
+                {videoError ? (
+                  <img 
+                    src="https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&q=80&w=1000" 
+                    className="w-full h-full object-cover grayscale opacity-70 group-hover:opacity-100 transition-all duration-700" 
+                    alt="Nelbac Flagship" 
+                  />
+                ) : (
+                  <video 
+                    src="https://awsmd.com/media/hero.mp4" 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                    onError={() => setVideoError(true)}
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-70 group-hover:opacity-100"
+                  />
+                )}
                 
                 {/* Visual Storytelling Overlays */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-[var(--bg-primary)]/20 to-transparent"></div>

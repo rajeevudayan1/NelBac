@@ -9,7 +9,7 @@ export const PRODUCTS: Product[] = [
     description: 'Cloud-based wireless IoT controller tailored for agriculture, landscaping, and industrial sectors.',
     price: 349.00,
     image: 'https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&q=80&w=1000',
-    video: 'https://cdn.pixabay.com/video/2021/08/10/84518-586796245_large.mp4',
+    video: 'https://player.vimeo.com/external/494252666.sd.mp4?s=727e335431665a3c00445d44745c928b52f6f195&profile_id=164',
     category: 'Flagship',
     features: [
       'Multi-zone irrigation control',
