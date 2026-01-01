@@ -13,6 +13,7 @@ const App: React.FC = () => {
   const [activeVisionIdx, setActiveVisionIdx] = useState(0);
   const [slideProgress, setSlideProgress] = useState(0); // Progress within current slide (0-100)
   const visionRef = useRef<HTMLDivElement>(null);
+  const productsRef = useRef<HTMLDivElement>(null);
   const isAutoScrolling = useRef(false);
   const lastSnapTime = useRef<number>(0);
   const animationFrameRef = useRef<number>(null);
@@ -169,6 +170,15 @@ const App: React.FC = () => {
     }, 800);
   };
 
+  const skipToHardware = () => {
+    if (!productsRef.current) return;
+    isAutoScrolling.current = true;
+    productsRef.current.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => {
+      isAutoScrolling.current = false;
+    }, 1000);
+  };
+
   const handleNext = () => {
     const nextIdx = (activeVisionIdx + 1) % visionSections.length;
     scrollToSlide(nextIdx);
@@ -289,7 +299,7 @@ const App: React.FC = () => {
           </div>
 
           <div className="relative z-10 w-full h-full max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-20 items-center justify-center px-6 md:px-16 pt-20 lg:pt-0">
-            <div className="absolute top-36 md:top-48 left-6 md:left-16 flex items-center gap-6 z-30">
+            <div className="absolute top-36 md:top-48 left-6 md:left-16 flex items-center gap-4 md:gap-6 z-30">
               <button 
                 onClick={handlePrev}
                 className="interactive group w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-[var(--border-primary)] flex items-center justify-center text-[var(--text-primary)] hover:border-[var(--accent-solid)] hover:bg-[var(--accent-solid)] hover:text-black transition-all shadow-xl active:scale-90"
@@ -303,6 +313,16 @@ const App: React.FC = () => {
                 aria-label="Next Slide"
               >
                 <i className="fas fa-arrow-right text-sm md:text-base group-hover:translate-x-1 transition-transform"></i>
+              </button>
+              
+              <button 
+                onClick={skipToHardware}
+                className="interactive group flex items-center gap-3 px-6 h-12 md:h-16 rounded-full glass border border-[var(--border-primary)] text-[var(--text-primary)] hover:border-[var(--accent-solid)] hover:bg-[var(--accent-solid)] hover:text-black transition-all shadow-xl active:scale-90 ml-2 md:ml-4"
+                aria-label="Skip to Hardware"
+              >
+                <span className="hidden md:block text-[10px] font-black uppercase tracking-[0.3em]">Skip to Hardware</span>
+                <span className="md:hidden text-[9px] font-black uppercase tracking-widest">Skip</span>
+                <i className="fas fa-angles-down text-xs group-hover:translate-y-1 transition-transform"></i>
               </button>
             </div>
 
@@ -389,7 +409,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      <section className="py-24 md:py-40 bg-[var(--bg-primary)] border-t border-[var(--border-secondary)] relative z-10">
+      <section ref={productsRef} id="hardware-section" className="py-24 md:py-40 bg-[var(--bg-primary)] border-t border-[var(--border-secondary)] relative z-10">
         <div className="max-w-7xl mx-auto px-6 md:px-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 mb-20 md:mb-32">
             <div>
