@@ -70,57 +70,102 @@ const App: React.FC = () => {
     }
   ];
 
-  // Manual Scroll Handling
+  // Paginated Hero-to-Vision Snap (Desktop Only)
+  useEffect(() => {
+    const handleHeroSnap = (e: WheelEvent) => {
+      if (window.innerWidth < 1024 || currentPage !== Page.Home || isAutoScrolling.current || !visionRef.current) return;
+
+      const scrollY = window.scrollY;
+      const visionTop = visionRef.current.offsetTop;
+
+      if (scrollY < 10 && e.deltaY > 0) {
+        e.preventDefault();
+        isAutoScrolling.current = true;
+        window.scrollTo({
+          top: visionTop,
+          behavior: 'smooth'
+        });
+        setTimeout(() => {
+          isAutoScrolling.current = false;
+        }, 400); // Snappier auto-scroll timeout
+      } 
+      else if (scrollY >= visionTop && scrollY <= visionTop + 50 && e.deltaY < 0) {
+        e.preventDefault();
+        isAutoScrolling.current = true;
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+        setTimeout(() => {
+          isAutoScrolling.current = false;
+        }, 400); // Snappier auto-scroll timeout
+      }
+    };
+
+    window.addEventListener('wheel', handleHeroSnap, { passive: false });
+    return () => window.removeEventListener('wheel', handleHeroSnap);
+  }, [currentPage, visionSections.length]);
+
+  // Manual Scroll Handling (within Vision Section)
   useEffect(() => {
     const handleScroll = () => {
       if (!visionRef.current || isAutoScrolling.current) return;
       
       const rect = visionRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const scrollProgress = -rect.top / (rect.height - viewportHeight);
+      const scrollableRange = rect.height - viewportHeight;
       
-      if (scrollProgress >= 0 && scrollProgress <= 1) {
-        const totalSlides = visionSections.length;
-        const rawIndex = scrollProgress * (totalSlides - 0.01);
-        const index = Math.min(Math.floor(rawIndex), totalSlides - 1);
-        const subProgress = (rawIndex % 1) * 100;
-        
-        setActiveVisionIdx(index);
-        setSlideProgress(subProgress);
-      }
+      const scrollProgress = Math.max(0, Math.min(1, -rect.top / scrollableRange));
+      
+      const totalSlides = visionSections.length;
+      const rawIndex = scrollProgress * totalSlides;
+      const index = Math.min(Math.floor(rawIndex), totalSlides - 1);
+      const subProgress = (rawIndex % 1) * 100;
+      
+      setActiveVisionIdx(index);
+      setSlideProgress(subProgress);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [visionSections.length]);
 
-  // Smoother Auto-Scrolling Logic with requestAnimationFrame
+  const scrollToSlide = (index: number) => {
+    if (!visionRef.current || isAutoScrolling.current) return;
+    
+    isAutoScrolling.current = true;
+    setActiveVisionIdx(index);
+    setSlideProgress(0);
+
+    const totalHeight = visionRef.current.offsetHeight;
+    const viewportHeight = window.innerHeight;
+    const scrollableRange = totalHeight - viewportHeight;
+    const segmentSize = scrollableRange / visionSections.length;
+    const target = visionRef.current.offsetTop + (index * segmentSize);
+
+    window.scrollTo({
+      top: target,
+      behavior: 'smooth'
+    });
+
+    setTimeout(() => {
+      isAutoScrolling.current = false;
+      lastTimeRef.current = performance.now();
+    }, 400); // Snappier logic reset
+  };
+
+  const handleNext = () => {
+    const nextIdx = (activeVisionIdx + 1) % visionSections.length;
+    scrollToSlide(nextIdx);
+  };
+
+  const handlePrev = () => {
+    const prevIdx = (activeVisionIdx - 1 + visionSections.length) % visionSections.length;
+    scrollToSlide(prevIdx);
+  };
+
+  // Auto-Play Advancement Logic
   useEffect(() => {
-    const handleNextSlide = () => {
-      if (!visionRef.current) return;
-      
-      const nextIdx = (activeVisionIdx + 1) % visionSections.length;
-      isAutoScrolling.current = true;
-      
-      const totalHeight = visionRef.current.offsetHeight;
-      const viewportHeight = window.innerHeight;
-      const scrollableRange = totalHeight - viewportHeight;
-      const sectionHeight = scrollableRange / visionSections.length;
-      const targetTop = visionRef.current.offsetTop + (nextIdx * sectionHeight) + (sectionHeight / 2);
-      
-      window.scrollTo({
-        top: targetTop,
-        behavior: 'smooth'
-      });
-
-      setTimeout(() => {
-        isAutoScrolling.current = false;
-        setActiveVisionIdx(nextIdx);
-        setSlideProgress(0);
-        lastTimeRef.current = performance.now(); // Reset time reference after jump
-      }, 800);
-    };
-
     const animate = (time: number) => {
       if (!visionRef.current || currentPage !== Page.Home || isAutoScrolling.current) {
         animationFrameRef.current = requestAnimationFrame(animate);
@@ -133,13 +178,12 @@ const App: React.FC = () => {
       const rect = visionRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
 
-      // Only advance timer if section is perfectly sticky/active
-      if (rect.top <= 10 && rect.bottom >= viewportHeight - 10) {
+      if (rect.top <= 20 && rect.bottom >= viewportHeight - 20) {
         setSlideProgress(prev => {
           const increment = (deltaTime / AUTO_PLAY_DURATION) * 100;
           const next = prev + increment;
           if (next >= 100) {
-            handleNextSlide();
+            handleNext();
             return 100;
           }
           return next;
@@ -186,14 +230,18 @@ const App: React.FC = () => {
     <>
       <Hero onExplore={setCurrentPage} />
       
-      <section ref={visionRef} className="relative h-[600vh] w-full bg-[var(--bg-primary)]">
+      <section 
+        ref={visionRef} 
+        className="relative w-full bg-[var(--bg-primary)]"
+        style={{ height: `${visionSections.length * 60}vh` }} 
+      >
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
           
           <div className="absolute inset-0 z-0">
             {visionSections.map((section, idx) => (
               <div 
                 key={idx}
-                className={`absolute inset-0 transition-all duration-1000 ease-in-out ${idx === activeVisionIdx ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}
+                className={`absolute inset-0 transition-all duration-500 ease-in-out ${idx === activeVisionIdx ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}
               >
                 <img 
                   src={section.image} 
@@ -201,10 +249,8 @@ const App: React.FC = () => {
                   style={{ filter: `brightness(var(--bg-img-brightness, 0.4))` }} 
                   alt="" 
                 />
-                
                 <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg-primary)] via-transparent to-transparent opacity-60"></div>
                 <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg-primary)] via-transparent to-[var(--bg-primary)] opacity-80"></div>
-                
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[25vw] font-black font-heading text-[var(--nelbac-accent)] uppercase italic select-none pointer-events-none whitespace-nowrap opacity-[0.03]">
                   {section.accent}
                 </div>
@@ -216,10 +262,10 @@ const App: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 md:px-8">
               <div className="w-full h-[3px] bg-[var(--text-primary)]/10 rounded-full relative overflow-hidden">
                 <div 
-                  className="absolute inset-y-0 left-0 bg-[var(--accent-solid)] shadow-[0_0_20px_rgba(0,243,255,0.8)]"
+                  className="absolute inset-y-0 left-0 bg-[var(--accent-solid)] shadow-[0_0_200px_rgba(0,243,255,0.8)]"
                   style={{ 
                     width: `${totalBarWidth}%`,
-                    transition: isAutoScrolling.current ? 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)' : 'none' 
+                    transition: isAutoScrolling.current ? 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)' : 'none' 
                   }}
                 ></div>
               </div>
@@ -227,11 +273,28 @@ const App: React.FC = () => {
           </div>
 
           <div className="relative z-10 w-full h-full max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-20 items-center justify-center px-6 md:px-16 pt-20 lg:pt-0">
+            <div className="absolute top-36 md:top-48 left-6 md:left-16 flex items-center gap-6 z-30">
+              <button 
+                onClick={handlePrev}
+                className="interactive group w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-[var(--border-primary)] flex items-center justify-center text-[var(--text-primary)] hover:border-[var(--accent-solid)] hover:bg-[var(--accent-solid)] hover:text-black transition-all shadow-xl active:scale-90"
+                aria-label="Previous Slide"
+              >
+                <i className="fas fa-arrow-left text-sm md:text-base group-hover:-translate-x-1 transition-transform"></i>
+              </button>
+              <button 
+                onClick={handleNext}
+                className="interactive group w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-[var(--border-primary)] flex items-center justify-center text-[var(--text-primary)] hover:border-[var(--accent-solid)] hover:bg-[var(--accent-solid)] hover:text-black transition-all shadow-xl active:scale-90"
+                aria-label="Next Slide"
+              >
+                <i className="fas fa-arrow-right text-sm md:text-base group-hover:translate-x-1 transition-transform"></i>
+              </button>
+            </div>
+
             <div className="relative w-full h-[25vh] md:h-[30vh] lg:h-[60vh] flex flex-col justify-center">
               {visionSections.map((section, idx) => (
                 <div 
                   key={idx}
-                  className={`absolute inset-0 flex flex-col justify-center transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                  className={`absolute inset-0 flex flex-col justify-center transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     idx === activeVisionIdx 
                     ? 'opacity-100 translate-y-0' 
                     : idx < activeVisionIdx 
@@ -263,7 +326,7 @@ const App: React.FC = () => {
                 {visionSections.map((section, idx) => (
                   <div 
                     key={idx}
-                    className={`absolute inset-x-8 md:inset-x-16 top-1/2 -translate-y-1/2 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    className={`absolute inset-x-8 md:inset-x-16 top-1/2 -translate-y-1/2 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                       idx === activeVisionIdx 
                       ? 'opacity-100 translate-x-0' 
                       : idx < activeVisionIdx 
@@ -282,7 +345,7 @@ const App: React.FC = () => {
                           className="absolute inset-y-0 left-0 bg-[var(--accent-solid)] shadow-[0_0_15px_rgba(0,243,255,0.3)]"
                           style={{ 
                             width: `${idx === activeVisionIdx ? slideProgress : (idx < activeVisionIdx ? 100 : 0)}%`,
-                            transition: isAutoScrolling.current ? 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)' : 'none'
+                            transition: isAutoScrolling.current ? 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)' : 'none'
                           }}
                         ></div>
                       </div>
@@ -295,18 +358,12 @@ const App: React.FC = () => {
                    {visionSections.map((_, dotIdx) => (
                      <div 
                        key={dotIdx}
-                       className={`interactive w-1 transition-all duration-500 rounded-full cursor-none hover:bg-[var(--accent-solid)]/50 ${
+                       className={`interactive w-1 transition-all duration-300 rounded-full cursor-none hover:bg-[var(--accent-solid)]/50 ${
                          dotIdx === activeVisionIdx 
                          ? 'h-8 md:h-12 bg-[var(--accent-solid)] shadow-[0_0_10px_rgba(0,243,255,0.4)]' 
                          : 'h-2 md:h-3 bg-[var(--text-primary)]/10'
                        }`}
-                       onClick={() => {
-                          if (!visionRef.current) return;
-                          const totalScrollableHeight = visionRef.current.offsetHeight - window.innerHeight;
-                          const segmentSize = totalScrollableHeight / visionSections.length;
-                          const target = visionRef.current.offsetTop + (dotIdx * segmentSize) + (segmentSize / 2);
-                          window.scrollTo({ top: target, behavior: 'smooth' });
-                       }}
+                       onClick={() => scrollToSlide(dotIdx)}
                      />
                    ))}
                 </div>
@@ -374,7 +431,7 @@ const App: React.FC = () => {
        ) : (
          <div className="space-y-8">
            {cart.map(item => (
-              <div key={item.product.id} className="glass p-8 rounded-[2rem] flex flex-col md:flex-row items-center justify-between border border-[var(--border-secondary)] hover:border-[var(--accent-solid)]/40 transition-all">
+              <div key={item.product.id} className="glass p-8 rounded-[2rem] flex flex-col md:flex-row items-center justify-between border border-[var(--border-secondary)]/40 transition-all">
                 <div className="flex items-center gap-12">
                   <img src={item.product.image} className="w-24 h-24 rounded-[1.5rem] object-cover grayscale opacity-60" alt="" />
                   <div>
