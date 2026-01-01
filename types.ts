@@ -6,6 +6,7 @@ export interface Product {
   description: string;
   price: number;
   image: string;
+  video?: string;
   features: string[];
   specs: Record<string, string>;
   category: string;

@@ -15,8 +15,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         <img 
           src={product.image} 
           alt={product.name} 
-          className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110 opacity-60 group-hover:opacity-100 grayscale group-hover:grayscale-0"
+          className={`w-full h-full object-cover transition-all duration-[1s] group-hover:scale-110 grayscale group-hover:grayscale-0 ${product.video ? 'group-hover:opacity-0' : 'opacity-60 group-hover:opacity-100'}`}
         />
+        
+        {product.video && (
+          <video 
+            src={product.video} 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-1000 scale-110"
+          />
+        )}
         
         {/* AR UI Elements */}
         <div className="absolute inset-0 border border-white/5 rounded-[2.2rem]"></div>

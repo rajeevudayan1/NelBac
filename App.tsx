@@ -11,7 +11,12 @@ const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>(Page.Home);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [activeVisionIdx, setActiveVisionIdx] = useState(0);
+  const [slideProgress, setSlideProgress] = useState(0); // Progress within current slide (0-100)
   const visionRef = useRef<HTMLDivElement>(null);
+  const isAutoScrolling = useRef(false);
+  const animationFrameRef = useRef<number>(null);
+  const lastTimeRef = useRef<number>(null);
+  const AUTO_PLAY_DURATION = 5000; // 5 seconds per slide
 
   const visionSections = [
     {
@@ -60,30 +65,96 @@ const App: React.FC = () => {
       title: "Be flexible.",
       subtitle: "Automate anywhere.",
       content: "Integrate any IoT device into your workflow. Our device is compatible with all standard valves be it AC or DC, 12V or 24V. Scale without technical debt.",
-      image: "https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&q=80&w=1920",
+      image: "https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&q=80&w=1000",
       accent: "Flexible"
     }
   ];
 
+  // Manual Scroll Handling
   useEffect(() => {
     const handleScroll = () => {
-      if (!visionRef.current) return;
+      if (!visionRef.current || isAutoScrolling.current) return;
       
       const rect = visionRef.current.getBoundingClientRect();
-      const scrollProgress = -rect.top / (rect.height - window.innerHeight);
+      const viewportHeight = window.innerHeight;
+      const scrollProgress = -rect.top / (rect.height - viewportHeight);
       
       if (scrollProgress >= 0 && scrollProgress <= 1) {
-        const index = Math.min(
-          Math.floor(scrollProgress * visionSections.length),
-          visionSections.length - 1
-        );
+        const totalSlides = visionSections.length;
+        const rawIndex = scrollProgress * (totalSlides - 0.01);
+        const index = Math.min(Math.floor(rawIndex), totalSlides - 1);
+        const subProgress = (rawIndex % 1) * 100;
+        
         setActiveVisionIdx(index);
+        setSlideProgress(subProgress);
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [visionSections.length]);
+
+  // Smoother Auto-Scrolling Logic with requestAnimationFrame
+  useEffect(() => {
+    const handleNextSlide = () => {
+      if (!visionRef.current) return;
+      
+      const nextIdx = (activeVisionIdx + 1) % visionSections.length;
+      isAutoScrolling.current = true;
+      
+      const totalHeight = visionRef.current.offsetHeight;
+      const viewportHeight = window.innerHeight;
+      const scrollableRange = totalHeight - viewportHeight;
+      const sectionHeight = scrollableRange / visionSections.length;
+      const targetTop = visionRef.current.offsetTop + (nextIdx * sectionHeight) + (sectionHeight / 2);
+      
+      window.scrollTo({
+        top: targetTop,
+        behavior: 'smooth'
+      });
+
+      setTimeout(() => {
+        isAutoScrolling.current = false;
+        setActiveVisionIdx(nextIdx);
+        setSlideProgress(0);
+        lastTimeRef.current = performance.now(); // Reset time reference after jump
+      }, 800);
+    };
+
+    const animate = (time: number) => {
+      if (!visionRef.current || currentPage !== Page.Home || isAutoScrolling.current) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      if (lastTimeRef.current === null) lastTimeRef.current = time;
+      const deltaTime = time - lastTimeRef.current;
+      
+      const rect = visionRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+
+      // Only advance timer if section is perfectly sticky/active
+      if (rect.top <= 10 && rect.bottom >= viewportHeight - 10) {
+        setSlideProgress(prev => {
+          const increment = (deltaTime / AUTO_PLAY_DURATION) * 100;
+          const next = prev + increment;
+          if (next >= 100) {
+            handleNextSlide();
+            return 100;
+          }
+          return next;
+        });
+      }
+      
+      lastTimeRef.current = time;
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    animationFrameRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+    };
+  }, [activeVisionIdx, visionSections.length, currentPage]);
 
   const addToCart = (product: Product) => {
     setCart(prev => {
@@ -109,11 +180,12 @@ const App: React.FC = () => {
   const cartTotal = cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
+  const totalBarWidth = ((activeVisionIdx + (slideProgress / 100)) / visionSections.length) * 100;
+
   const renderHome = () => (
     <>
       <Hero onExplore={setCurrentPage} />
       
-      {/* VISION STORYTELLING SECTION - RESTORED DESIGN */}
       <section ref={visionRef} className="relative h-[600vh] w-full bg-[var(--bg-primary)]">
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
           
@@ -125,10 +197,11 @@ const App: React.FC = () => {
               >
                 <img 
                   src={section.image} 
-                  className="w-full h-full object-cover" 
+                  className="w-full h-full object-cover absolute inset-0" 
                   style={{ filter: `brightness(var(--bg-img-brightness, 0.4))` }} 
                   alt="" 
                 />
+                
                 <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg-primary)] via-transparent to-transparent opacity-60"></div>
                 <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg-primary)] via-transparent to-[var(--bg-primary)] opacity-80"></div>
                 
@@ -139,16 +212,18 @@ const App: React.FC = () => {
             ))}
           </div>
 
-          <div className="absolute top-24 md:top-32 left-6 right-6 md:left-12 md:right-12 z-20 pointer-events-none flex items-center justify-between">
-            <div className="flex items-center gap-4 md:gap-8">
-               <span className="text-[8px] md:text-[10px] font-black text-[var(--accent-solid)] uppercase tracking-[0.5em] md:tracking-[0.8em]">SYSTEM_STORYLINE</span>
-               <div className="flex gap-1.5 md:gap-2">
-                 {visionSections.map((_, i) => (
-                   <div key={i} className={`h-0.5 md:h-1 transition-all duration-500 ${i === activeVisionIdx ? 'w-8 md:w-12 bg-[var(--accent-solid)] shadow-[0_0_10px_rgba(0,243,255,0.4)]' : 'w-2 md:w-3 bg-[var(--text-primary)]/10'}`}></div>
-                 ))}
-               </div>
+          <div className="absolute top-24 md:top-32 left-0 right-0 z-20 pointer-events-none">
+            <div className="max-w-7xl mx-auto px-4 md:px-8">
+              <div className="w-full h-[3px] bg-[var(--text-primary)]/10 rounded-full relative overflow-hidden">
+                <div 
+                  className="absolute inset-y-0 left-0 bg-[var(--accent-solid)] shadow-[0_0_20px_rgba(0,243,255,0.8)]"
+                  style={{ 
+                    width: `${totalBarWidth}%`,
+                    transition: isAutoScrolling.current ? 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)' : 'none' 
+                  }}
+                ></div>
+              </div>
             </div>
-            <span className="text-[8px] md:text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest opacity-50">NODE.0{activeVisionIdx + 1} // ACTIVE</span>
           </div>
 
           <div className="relative z-10 w-full h-full max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-20 items-center justify-center px-6 md:px-16 pt-20 lg:pt-0">
@@ -167,7 +242,7 @@ const App: React.FC = () => {
                   <div className="vision-heading-box">
                     <div className="flex items-center gap-4 md:gap-6 mb-3 md:mb-6">
                       <div className="w-8 md:w-12 h-1 bg-[var(--accent-solid)] shadow-[0_0_15px_rgba(0,243,255,0.4)]"></div>
-                      <span className="text-[var(--accent-solid)] font-black text-[9px] md:text-[11px] tracking-[0.4em] md:tracking-[0.6em] uppercase">SEQUENCE_MODULE_0{idx+1}</span>
+                      <span className="text-[var(--accent-solid)] font-black text-[9px] md:text-[11px] tracking-[0.4em] md:tracking-[0.6em] uppercase">MODULE_0{idx+1}</span>
                     </div>
                     <h2 className="text-4xl md:text-7xl lg:text-8xl font-black font-heading text-[var(--text-primary)] uppercase italic leading-[0.85] tracking-tighter">
                       {section.title}
@@ -182,7 +257,6 @@ const App: React.FC = () => {
 
             <div className="relative w-full h-[35vh] md:h-[40vh] lg:h-[50vh] flex items-center">
               <div className="vision-card w-full rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 relative overflow-hidden flex flex-col justify-center min-h-[220px] md:min-h-[300px] shadow-2xl">
-                {/* Decorative Corners */}
                 <div className="absolute top-6 left-6 w-4 h-4 border-t border-l border-[var(--accent-solid)]/30"></div>
                 <div className="absolute bottom-6 right-6 w-4 h-4 border-b border-r border-[var(--accent-solid)]/30"></div>
 
@@ -203,10 +277,13 @@ const App: React.FC = () => {
 
                     <div className="flex items-center gap-4 md:gap-8">
                       <span className="index-text font-black font-heading text-lg md:text-2xl italic">0{idx+1}</span>
-                      <div className="flex-1 h-[1.5px] md:h-[2px] bg-[var(--text-primary)]/10 rounded-full relative overflow-hidden">
+                      <div className="flex-1 h-[2px] bg-[var(--text-primary)]/10 rounded-full relative overflow-hidden">
                         <div 
-                          className="absolute inset-y-0 left-0 bg-[var(--accent-solid)] shadow-[0_0_15px_rgba(0,243,255,0.3)] transition-all duration-1000"
-                          style={{ width: idx === activeVisionIdx ? '100%' : '0%' }}
+                          className="absolute inset-y-0 left-0 bg-[var(--accent-solid)] shadow-[0_0_15px_rgba(0,243,255,0.3)]"
+                          style={{ 
+                            width: `${idx === activeVisionIdx ? slideProgress : (idx < activeVisionIdx ? 100 : 0)}%`,
+                            transition: isAutoScrolling.current ? 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)' : 'none'
+                          }}
                         ></div>
                       </div>
                       <span className="index-text font-black font-heading text-lg md:text-2xl italic">0{visionSections.length}</span>
@@ -214,7 +291,6 @@ const App: React.FC = () => {
                   </div>
                 ))}
 
-                {/* Vertical Dot Navigation - RESTORED */}
                 <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 hidden sm:flex flex-col gap-3 md:gap-4">
                    {visionSections.map((_, dotIdx) => (
                      <div 
@@ -240,7 +316,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* HARDWARE GRID */}
       <section className="py-24 md:py-40 bg-[var(--bg-primary)] border-t border-[var(--border-secondary)] relative z-10">
         <div className="max-w-7xl mx-auto px-6 md:px-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 mb-20 md:mb-32">

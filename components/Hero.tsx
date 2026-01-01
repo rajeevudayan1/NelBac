@@ -12,7 +12,6 @@ const Hero: React.FC<HeroProps> = ({ onExplore }) => {
       {/* Localized 3D Grid Background */}
       <div className="hero-grid-container">
         <div className="grid-3d-floor"></div>
-        <div className="grid-3d-scanline"></div>
       </div>
 
       {/* Background Ambience Overlays */}
