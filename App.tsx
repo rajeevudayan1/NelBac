@@ -14,6 +14,7 @@ const App: React.FC = () => {
   const [slideProgress, setSlideProgress] = useState(0); // Progress within current slide (0-100)
   const visionRef = useRef<HTMLDivElement>(null);
   const isAutoScrolling = useRef(false);
+  const lastSnapTime = useRef<number>(0);
   const animationFrameRef = useRef<number>(null);
   const lastTimeRef = useRef<number>(null);
   const AUTO_PLAY_DURATION = 5000; // 5 seconds per slide
@@ -73,38 +74,49 @@ const App: React.FC = () => {
   // Paginated Hero-to-Vision Snap (Desktop Only)
   useEffect(() => {
     const handleHeroSnap = (e: WheelEvent) => {
+      // Don't snap on mobile or if already animating or not on home
       if (window.innerWidth < 1024 || currentPage !== Page.Home || isAutoScrolling.current || !visionRef.current) return;
+
+      const now = Date.now();
+      // Extended cooldown to ignore momentum artifacts
+      if (now - lastSnapTime.current < 1200) return;
 
       const scrollY = window.scrollY;
       const visionTop = visionRef.current.offsetTop;
+      const snapThreshold = 15; // Strict threshold for determining if we're "at" a position
 
-      if (scrollY < 10 && e.deltaY > 0) {
+      // SCROLL DOWN: From Hero (y=0) to Vision
+      if (scrollY < snapThreshold && e.deltaY > 30) {
         e.preventDefault();
         isAutoScrolling.current = true;
+        lastSnapTime.current = now;
         window.scrollTo({
           top: visionTop,
           behavior: 'smooth'
         });
         setTimeout(() => {
           isAutoScrolling.current = false;
-        }, 400); // Snappier auto-scroll timeout
+        }, 1000); // Wait for smooth scroll completion
       } 
-      else if (scrollY >= visionTop && scrollY <= visionTop + 50 && e.deltaY < 0) {
+      // SCROLL UP: From Vision Start (y=visionTop) to Hero (y=0)
+      // Guard: Only if on Slide 0 to avoid reversing while in the middle of vision content
+      else if (activeVisionIdx === 0 && scrollY >= visionTop - snapThreshold && scrollY <= visionTop + snapThreshold && e.deltaY < -30) {
         e.preventDefault();
         isAutoScrolling.current = true;
+        lastSnapTime.current = now;
         window.scrollTo({
           top: 0,
           behavior: 'smooth'
         });
         setTimeout(() => {
           isAutoScrolling.current = false;
-        }, 400); // Snappier auto-scroll timeout
+        }, 1000);
       }
     };
 
     window.addEventListener('wheel', handleHeroSnap, { passive: false });
     return () => window.removeEventListener('wheel', handleHeroSnap);
-  }, [currentPage, visionSections.length]);
+  }, [currentPage, activeVisionIdx]);
 
   // Manual Scroll Handling (within Vision Section)
   useEffect(() => {
@@ -115,6 +127,9 @@ const App: React.FC = () => {
       const viewportHeight = window.innerHeight;
       const scrollableRange = rect.height - viewportHeight;
       
+      // Only process if the vision section is in active view
+      if (rect.top > viewportHeight || rect.bottom < 0) return;
+
       const scrollProgress = Math.max(0, Math.min(1, -rect.top / scrollableRange));
       
       const totalSlides = visionSections.length;
@@ -151,7 +166,7 @@ const App: React.FC = () => {
     setTimeout(() => {
       isAutoScrolling.current = false;
       lastTimeRef.current = performance.now();
-    }, 400); // Snappier logic reset
+    }, 800);
   };
 
   const handleNext = () => {
@@ -178,7 +193,8 @@ const App: React.FC = () => {
       const rect = visionRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
 
-      if (rect.top <= 20 && rect.bottom >= viewportHeight - 20) {
+      // Only auto-play if the vision section is precisely in view (snapped)
+      if (Math.abs(rect.top) < 10 && rect.bottom >= viewportHeight - 10) {
         setSlideProgress(prev => {
           const increment = (deltaTime / AUTO_PLAY_DURATION) * 100;
           const next = prev + increment;
