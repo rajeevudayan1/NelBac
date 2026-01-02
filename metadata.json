@@ -1,8 +1,5 @@
 {
   "name": "Nelbac IoT - Next Gen Smart Infrastructure",
   "description": "A premium, high-tech e-commerce experience for Nelbac's cutting-edge IoT product line, featuring an AI-powered smart advisor.",
-  "requestFramePermissions": [
-    "camera",
-    "microphone"
-  ]
+  "requestFramePermissions": []
 }
