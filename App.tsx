@@ -7,6 +7,8 @@ import Hero from './components/Hero';
 import ProductCard from './components/ProductCard';
 import SmartAdvisor from './components/SmartAdvisor';
 
+const hasGeminiKey = Boolean(import.meta.env.GEMINI_API_KEY);
+
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>(Page.Home);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -506,7 +508,7 @@ const App: React.FC = () => {
         {currentPage === Page.Cart && renderCart()}
       </main>
       
-      <SmartAdvisor />
+      {hasGeminiKey && <SmartAdvisor />}
       
       <footer className="py-32 bg-[var(--bg-secondary)] border-t border-[var(--border-secondary)] relative z-20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-8 text-center">
