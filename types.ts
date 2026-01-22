@@ -32,6 +32,7 @@ export interface CartItem {
   quantity: number;
 }
 
+// Added ChatMessage interface to support AI advisor message history tracking
 export interface ChatMessage {
   role: 'user' | 'ai';
   content: string;

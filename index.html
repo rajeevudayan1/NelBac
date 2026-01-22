@@ -54,39 +54,70 @@
             background-color: var(--bg-primary);
             color: var(--text-primary);
             transition: background-color 0.5s ease, color 0.5s ease;
+            cursor: auto;
+        }
+
+        /* HIDE SYSTEM CURSOR ON HOVER */
+        body.cursor-active, 
+        body.cursor-active * {
+            cursor: none !important;
+        }
+
+        /* CUSTOM CURSOR - DECORATIVE HOVER ONLY */
+        #cursor-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 99999;
+        }
+
+        .custom-cursor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0px; 
+            height: 0px;
+            background: #fff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+            transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1), 
+                        height 0.4s cubic-bezier(0.23, 1, 0.32, 1), 
+                        opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .custom-cursor i {
+            font-size: 10px; /* Adjusted for smaller circle */
+            color: #000;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.3s ease 0.1s;
+        }
+
+        /* Cursor States - Reduced to half size (30px instead of 60px) */
+        body.cursor-active .custom-cursor {
+            width: 30px;
+            height: 30px;
+            opacity: 1;
+        }
+
+        body.cursor-active .custom-cursor i {
+            opacity: 1;
+            transform: scale(1);
         }
 
         h1, h2, h3, .font-heading {
             font-family: 'Space Grotesk', sans-serif;
             letter-spacing: -0.05em;
-        }
-
-        /* CUSTOM CURSOR - HYBRID DOT */
-        #cursor-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--nelbac-accent);
-            position: fixed;
-            top: 0;
-            left: 0;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            box-shadow: 0 0 10px var(--nelbac-accent), 0 0 20px var(--nelbac-accent);
-            transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
-                        height 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
-                        background 0.2s, 
-                        border 0.2s,
-                        box-shadow 0.2s;
-            will-change: transform;
-        }
-
-        .cursor-hover #cursor-dot {
-            width: 14px;
-            height: 14px;
-            background: transparent;
-            border: 2px solid var(--nelbac-accent);
-            box-shadow: 0 0 15px var(--nelbac-accent);
         }
 
         .glass {
@@ -96,7 +127,6 @@
             border: 1px solid var(--border-primary);
         }
 
-        /* RESTORED VISION SECTION STYLES */
         .vision-card {
             background: var(--vision-card-bg) !important;
             backdrop-filter: blur(32px);
@@ -109,27 +139,6 @@
 
         .vision-card p {
             color: var(--vision-card-secondary) !important;
-        }
-
-        .vision-card .index-text {
-            color: var(--vision-card-secondary) !important;
-            opacity: 0.7 !important;
-        }
-
-        .vision-heading-box {
-            position: relative;
-            padding: 2rem;
-            margin-left: -2rem;
-            border-radius: 2rem;
-            background: radial-gradient(circle at left, rgba(0,0,0,0.4) 0%, transparent 70%);
-        }
-
-        html.light .vision-heading-box {
-            background: radial-gradient(circle at left, rgba(255,255,255,0.3) 0%, transparent 70%);
-        }
-
-        .vision-heading-box h2 {
-            text-shadow: var(--heading-shadow);
         }
 
         .glow-link {
@@ -224,7 +233,13 @@
 </script>
 </head>
 <body class="antialiased overflow-x-hidden">
-    <div id="cursor-dot"></div>
+    <!-- Custom cursor wrapper for hover animation -->
+    <div id="cursor-wrapper">
+        <div class="custom-cursor" id="main-cursor">
+            <i id="cursor-icon" class="fas fa-plus"></i>
+        </div>
+    </div>
+
     <div class="scroll-progress" id="scroll-bar"></div>
     <div id="root"></div>
     <script>
@@ -233,34 +248,47 @@
             document.documentElement.classList.add('light');
         }
 
-        const dot = document.getElementById('cursor-dot');
-        let mouseX = 0;
-        let mouseY = 0;
-        let dotX = 0;
-        let dotY = 0;
+        const cursor = document.getElementById('main-cursor');
+        const cursorIcon = document.getElementById('cursor-icon');
+        
+        let mouse = { x: 0, y: 0 };
+        let pos = { x: 0, y: 0 };
+        const speed = 0.2; // Smoothness factor
 
         window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+
+            // Detect if hovering over something clickable
             const target = e.target;
-            const interactiveEl = target.closest('a, button, .interactive, .glow-link');
+            const interactiveEl = target.closest('a, button, .interactive, .glow-link, [data-cursor]');
+            
             if (interactiveEl) {
-                document.body.classList.add('cursor-hover');
+                document.body.classList.add('cursor-active');
+                
+                // Determine icon based on element type
+                const cursorData = interactiveEl.getAttribute('data-cursor');
+                if (cursorData === 'view') {
+                    cursorIcon.className = 'fas fa-expand';
+                } else if (cursorData === 'add') {
+                    cursorIcon.className = 'fas fa-plus';
+                } else {
+                    cursorIcon.className = 'fas fa-arrow-right';
+                }
             } else {
-                document.body.classList.remove('cursor-hover');
+                document.body.classList.remove('cursor-active');
             }
         });
 
-        const animateCursor = () => {
-            const easing = 0.15;
-            dotX += (mouseX - dotX) * easing;
-            dotY += (mouseY - dotY) * easing;
-            const isHover = document.body.classList.contains('cursor-hover');
-            const offset = isHover ? 7 : 4;
-            dot.style.transform = `translate3d(${dotX - offset}px, ${dotY - offset}px, 0)`;
-            requestAnimationFrame(animateCursor);
+        // Animation loop for smooth cursor lag
+        const updateCursor = () => {
+            pos.x += (mouse.x - pos.x) * speed;
+            pos.y += (mouse.y - pos.y) * speed;
+            
+            cursor.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0) translate(-50%, -50%)`;
+            requestAnimationFrame(updateCursor);
         };
-        animateCursor();
+        updateCursor();
 
         window.onscroll = function() {
             var winScroll = document.body.scrollTop || document.documentElement.scrollTop;

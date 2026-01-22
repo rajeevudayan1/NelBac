@@ -11,7 +11,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
   const [videoError, setVideoError] = useState(false);
 
   return (
-    <div className="card-3d group relative flex flex-col h-full bg-[var(--text-primary)]/5 border border-[var(--border-secondary)] rounded-[2.5rem] p-1.5 transition-all hover:border-[#00f3ff]/40 hover:bg-[var(--text-primary)]/10">
+    <div 
+      className="card-3d group relative flex flex-col h-full bg-[var(--text-primary)]/5 border border-[var(--border-secondary)] rounded-[2.5rem] p-1.5 transition-all hover:border-[#00f3ff]/40 hover:bg-[var(--text-primary)]/10"
+      data-cursor="view"
+    >
       {/* Immersive Visual Container */}
       <div className="relative aspect-square rounded-[2.2rem] overflow-hidden bg-slate-900">
         <img 
@@ -65,6 +68,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
 
         <button 
           onClick={() => onAddToCart(product)}
+          data-cursor="add"
           className="mt-auto group relative w-full bg-[var(--text-primary)] text-[var(--bg-primary)] font-black py-5 rounded-2xl transition-all hover:bg-[#00f3ff] hover:text-black flex items-center justify-center gap-4 uppercase text-[10px] tracking-[0.4em] shadow-xl overflow-hidden active:scale-95"
         >
           <span className="relative z-10">Add to Queue</span>
