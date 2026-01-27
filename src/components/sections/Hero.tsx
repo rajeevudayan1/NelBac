@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Page } from '../types';
+import { Page } from '@/types';
 
 interface HeroProps {
   onExplore: (page: Page) => void;
@@ -38,7 +37,7 @@ const Hero: React.FC<HeroProps> = ({ onExplore }) => {
             </h1>
             
             <p className="text-xl md:text-2xl text-[var(--text-secondary)] max-w-xl mb-16 font-light leading-relaxed">
-              Precision-engineered IoT ecosystems. <span className="text-[var(--text-primary)] font-medium">Simplify labor</span>, maximize yield, and scale your infrastructure with Nelbac’s flagship NC Controller.
+              Precision-engineered IoT ecosystems. <span className="text-[var(--text-primary)] font-medium">Simplify labor</span>, maximize yield, and scale your infrastructure with Nelbac's flagship NC Controller.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center gap-8">

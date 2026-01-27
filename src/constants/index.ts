@@ -1,5 +1,4 @@
-
-import { Product, Service, BlogPost } from './types';
+import { Product, Service, BlogPost } from '@/types';
 
 export const PRODUCTS: Product[] = [
   {

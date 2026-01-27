@@ -1,149 +1,24 @@
-
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Page, Product, CartItem } from './types';
-import { PRODUCTS } from './constants';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import ProductCard from './components/ProductCard';
-import SmartAdvisor from './components/SmartAdvisor';
-
-const hasGeminiKey = Boolean(import.meta.env.GEMINI_API_KEY);
-
-// Custom Cursor Component - Filled circle with arrow, appears on hover with fluid zoom
-const CustomCursor: React.FC<{ isHovering: boolean; position: { x: number; y: number } }> = ({ isHovering, position }) => {
-  return (
-    <div
-      className="fixed pointer-events-none z-[9999]"
-      style={{
-        left: position.x,
-        top: position.y,
-        transform: 'translate(-50%, -50%)',
-      }}
-    >
-      <div 
-        className={`relative flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-          isHovering 
-            ? 'w-8 h-8 opacity-100' 
-            : 'w-0 h-0 opacity-0'
-        }`}
-      >
-        <div 
-          className={`absolute inset-0 bg-[#00f3ff] rounded-full transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-            isHovering ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
-          }`}
-          style={{
-            boxShadow: isHovering ? '0 0 15px rgba(0,243,255,0.6), 0 0 30px rgba(0,243,255,0.3)' : 'none'
-          }}
-        />
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          className={`text-black transform -rotate-45 relative z-10 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-            isHovering ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
-          }`}
-          style={{
-            transitionDelay: isHovering ? '80ms' : '0ms'
-          }}
-        >
-          <path
-            d="M5 12H19M19 12L12 5M19 12L12 19"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
-    </div>
-  );
-};
+import React, { useState, useEffect, useRef } from 'react';
+import { Page, Product, CartItem } from '@/types';
+import { PRODUCTS } from '@/constants';
+import { Header, Footer, Hero, ProductCard, CustomCursor, SplashScreen } from '@/components';
+import { useCustomCursor } from '@/hooks/useCustomCursor';
 
 const App: React.FC = () => {
+  const [showSplash, setShowSplash] = useState(true);
   const [currentPage, setCurrentPage] = useState<Page>(Page.Home);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [activeVisionIdx, setActiveVisionIdx] = useState(0);
-  const [slideProgress, setSlideProgress] = useState(0); // Progress within current slide (0-100)
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  const [isHoveringInteractive, setIsHoveringInteractive] = useState(false);
+  const [slideProgress, setSlideProgress] = useState(0);
+  const { position: cursorPosition, isHovering: isHoveringInteractive } = useCustomCursor();
+  
   const visionRef = useRef<HTMLDivElement>(null);
   const productsRef = useRef<HTMLDivElement>(null);
   const isAutoScrolling = useRef(false);
   const lastSnapTime = useRef<number>(0);
   const animationFrameRef = useRef<number>(null);
   const lastTimeRef = useRef<number>(null);
-  const AUTO_PLAY_DURATION = 5000; // 5 seconds per slide
-
-  // Custom cursor tracking
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setCursorPosition({ x: e.clientX, y: e.clientY });
-    };
-
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const isInteractive = 
-        target.tagName === 'BUTTON' ||
-        target.tagName === 'A' ||
-        target.closest('button') ||
-        target.closest('a') ||
-        target.classList.contains('interactive') ||
-        target.closest('.interactive') ||
-        target.classList.contains('glow-link') ||
-        target.closest('.glow-link') ||
-        target.classList.contains('card-3d') ||
-        target.closest('.card-3d');
-      
-      if (isInteractive) {
-        setIsHoveringInteractive(true);
-      }
-    };
-
-    const handleMouseOut = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const relatedTarget = e.relatedTarget as HTMLElement;
-      
-      const isLeavingInteractive = 
-        target.tagName === 'BUTTON' ||
-        target.tagName === 'A' ||
-        target.closest('button') ||
-        target.closest('a') ||
-        target.classList.contains('interactive') ||
-        target.closest('.interactive') ||
-        target.classList.contains('glow-link') ||
-        target.closest('.glow-link') ||
-        target.classList.contains('card-3d') ||
-        target.closest('.card-3d');
-
-      const isEnteringInteractive = relatedTarget && (
-        relatedTarget.tagName === 'BUTTON' ||
-        relatedTarget.tagName === 'A' ||
-        relatedTarget.closest('button') ||
-        relatedTarget.closest('a') ||
-        relatedTarget.classList.contains('interactive') ||
-        relatedTarget.closest('.interactive') ||
-        relatedTarget.classList.contains('glow-link') ||
-        relatedTarget.closest('.glow-link') ||
-        relatedTarget.classList.contains('card-3d') ||
-        relatedTarget.closest('.card-3d')
-      );
-
-      if (isLeavingInteractive && !isEnteringInteractive) {
-        setIsHoveringInteractive(false);
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseover', handleMouseOver);
-    document.addEventListener('mouseout', handleMouseOut);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseover', handleMouseOver);
-      document.removeEventListener('mouseout', handleMouseOut);
-    };
-  }, []);
+  const AUTO_PLAY_DURATION = 5000;
 
   const visionSections = [
     {
@@ -200,43 +75,28 @@ const App: React.FC = () => {
   // Paginated Hero-to-Vision Snap (Desktop Only)
   useEffect(() => {
     const handleHeroSnap = (e: WheelEvent) => {
-      // Don't snap on mobile or if already animating or not on home
       if (window.innerWidth < 1024 || currentPage !== Page.Home || isAutoScrolling.current || !visionRef.current) return;
 
       const now = Date.now();
-      // Extended cooldown to ignore momentum artifacts
       if (now - lastSnapTime.current < 1200) return;
 
       const scrollY = window.scrollY;
       const visionTop = visionRef.current.offsetTop;
-      const snapThreshold = 15; // Strict threshold for determining if we're "at" a position
+      const snapThreshold = 15;
 
-      // SCROLL DOWN: From Hero (y=0) to Vision
       if (scrollY < snapThreshold && e.deltaY > 30) {
         e.preventDefault();
         isAutoScrolling.current = true;
         lastSnapTime.current = now;
-        window.scrollTo({
-          top: visionTop,
-          behavior: 'smooth'
-        });
-        setTimeout(() => {
-          isAutoScrolling.current = false;
-        }, 1000); // Wait for smooth scroll completion
+        window.scrollTo({ top: visionTop, behavior: 'smooth' });
+        setTimeout(() => { isAutoScrolling.current = false; }, 1000);
       } 
-      // SCROLL UP: From Vision Start (y=visionTop) to Hero (y=0)
-      // Guard: Only if on Slide 0 to avoid reversing while in the middle of vision content
       else if (activeVisionIdx === 0 && scrollY >= visionTop - snapThreshold && scrollY <= visionTop + snapThreshold && e.deltaY < -30) {
         e.preventDefault();
         isAutoScrolling.current = true;
         lastSnapTime.current = now;
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
-        setTimeout(() => {
-          isAutoScrolling.current = false;
-        }, 1000);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => { isAutoScrolling.current = false; }, 1000);
       }
     };
 
@@ -244,7 +104,7 @@ const App: React.FC = () => {
     return () => window.removeEventListener('wheel', handleHeroSnap);
   }, [currentPage, activeVisionIdx]);
 
-  // Manual Scroll Handling (within Vision Section)
+  // Manual Scroll Handling
   useEffect(() => {
     const handleScroll = () => {
       if (!visionRef.current || isAutoScrolling.current) return;
@@ -253,11 +113,9 @@ const App: React.FC = () => {
       const viewportHeight = window.innerHeight;
       const scrollableRange = rect.height - viewportHeight;
       
-      // Only process if the vision section is in active view
       if (rect.top > viewportHeight || rect.bottom < 0) return;
 
       const scrollProgress = Math.max(0, Math.min(1, -rect.top / scrollableRange));
-      
       const totalSlides = visionSections.length;
       const rawIndex = scrollProgress * totalSlides;
       const index = Math.min(Math.floor(rawIndex), totalSlides - 1);
@@ -284,10 +142,7 @@ const App: React.FC = () => {
     const segmentSize = scrollableRange / visionSections.length;
     const target = visionRef.current.offsetTop + (index * segmentSize);
 
-    window.scrollTo({
-      top: target,
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: target, behavior: 'smooth' });
 
     setTimeout(() => {
       isAutoScrolling.current = false;
@@ -299,9 +154,7 @@ const App: React.FC = () => {
     if (!productsRef.current) return;
     isAutoScrolling.current = true;
     productsRef.current.scrollIntoView({ behavior: 'smooth' });
-    setTimeout(() => {
-      isAutoScrolling.current = false;
-    }, 1000);
+    setTimeout(() => { isAutoScrolling.current = false; }, 1000);
   };
 
   const handleNext = () => {
@@ -314,7 +167,7 @@ const App: React.FC = () => {
     scrollToSlide(prevIdx);
   };
 
-  // Auto-Play Advancement Logic
+  // Auto-Play
   useEffect(() => {
     const animate = (time: number) => {
       if (!visionRef.current || currentPage !== Page.Home || isAutoScrolling.current) {
@@ -328,7 +181,6 @@ const App: React.FC = () => {
       const rect = visionRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
 
-      // Only auto-play if the vision section is precisely in view (snapped)
       if (Math.abs(rect.top) < 10 && rect.bottom >= viewportHeight - 10) {
         setSlideProgress(prev => {
           const increment = (deltaTime / AUTO_PLAY_DURATION) * 100;
@@ -374,7 +226,6 @@ const App: React.FC = () => {
 
   const cartTotal = cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
-
   const totalBarWidth = ((activeVisionIdx + (slideProgress / 100)) / visionSections.length) * 100;
 
   const renderHome = () => (
@@ -387,7 +238,6 @@ const App: React.FC = () => {
         style={{ height: `${visionSections.length * 60}vh` }} 
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
-          
           <div className="absolute inset-0 z-0">
             {visionSections.map((section, idx) => (
               <div 
@@ -428,14 +278,12 @@ const App: React.FC = () => {
               <button 
                 onClick={handlePrev}
                 className="interactive group w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-[var(--border-primary)] flex items-center justify-center text-[var(--text-primary)] hover:border-[var(--accent-solid)] hover:bg-[var(--accent-solid)] hover:text-black transition-all shadow-xl active:scale-90"
-                aria-label="Previous Slide"
               >
                 <i className="fas fa-arrow-left text-sm md:text-base group-hover:-translate-x-1 transition-transform"></i>
               </button>
               <button 
                 onClick={handleNext}
                 className="interactive group w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-[var(--border-primary)] flex items-center justify-center text-[var(--text-primary)] hover:border-[var(--accent-solid)] hover:bg-[var(--accent-solid)] hover:text-black transition-all shadow-xl active:scale-90"
-                aria-label="Next Slide"
               >
                 <i className="fas fa-arrow-right text-sm md:text-base group-hover:translate-x-1 transition-transform"></i>
               </button>
@@ -443,7 +291,6 @@ const App: React.FC = () => {
               <button 
                 onClick={skipToHardware}
                 className="interactive group flex items-center gap-3 px-6 h-12 md:h-16 rounded-full glass border border-[var(--border-primary)] text-[var(--text-primary)] hover:border-[var(--accent-solid)] hover:bg-[var(--accent-solid)] hover:text-black transition-all shadow-xl active:scale-90 ml-2 md:ml-4"
-                aria-label="Skip to Hardware"
               >
                 <span className="hidden md:block text-[10px] font-black uppercase tracking-[0.3em]">Skip to Hardware</span>
                 <span className="md:hidden text-[9px] font-black uppercase tracking-widest">Skip</span>
@@ -624,6 +471,11 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] cursor-default">
+      {showSplash && (
+        <SplashScreen 
+          onComplete={() => setShowSplash(false)} 
+        />
+      )}
       <CustomCursor isHovering={isHoveringInteractive} position={cursorPosition} />
       <Header currentPage={currentPage} setCurrentPage={setCurrentPage} cartCount={cartCount} />
       <main>
@@ -632,28 +484,7 @@ const App: React.FC = () => {
         {currentPage === Page.Cart && renderCart()}
       </main>
       
-      {hasGeminiKey && <SmartAdvisor />}
-      
-      <footer className="py-32 bg-[var(--bg-secondary)] border-t border-[var(--border-secondary)] relative z-20 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-8 text-center">
-          <div className="text-3xl font-black font-heading text-[var(--text-primary)] mb-10 tracking-tighter italic">NELBAC // SYSTEMS</div>
-          <div className="flex justify-center gap-12 mb-10">
-            <span className="glow-link text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.2em] ml-4 flex items-center gap-2">
-              <i className="fas fa-book text-xs"></i>
-              Documentation
-            </span>
-            <span className="glow-link text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.2em] ml-4 flex items-center gap-2">
-              <i className="fas fa-signal text-xs"></i>
-              API Status
-            </span>
-            <span className="glow-link text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.2em] ml-4 flex items-center gap-2">
-              <i className="fas fa-shield-alt text-xs"></i>
-              Privacy
-            </span>
-          </div>
-          <p className="text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[1em]">© 2024 NELBAC IOT SYSTEMS • AUTOMATE ANYTHING</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
-import { Page } from '../types';
+import { Page } from '@/types';
+import logo from '@/assets/images/nelbac-logo-white.png';
 
 interface HeaderProps {
   currentPage: Page;
@@ -55,13 +55,14 @@ const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage, cartCount 
           {/* Logo */}
           <a 
             href="#"
-            className="flex items-center gap-2 md:gap-3 cursor-none group"
+            className="flex items-center cursor-none group"
             onClick={(e) => { e.preventDefault(); setCurrentPage(Page.Home); }}
           >
-            <div className={`w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center transition-transform group-hover:rotate-12 ${isLight ? 'bg-slate-900' : 'bg-[#00f3ff]'}`}>
-              <i className={`fas fa-microchip text-xs md:text-sm ${isLight ? 'text-white' : 'text-black'}`}></i>
-            </div>
-            <span className={`text-lg md:text-xl font-black tracking-tighter font-heading italic transition-colors ${isLight ? 'text-slate-900' : 'text-white'}`}>NELBAC</span>
+            <img 
+              src={logo} 
+              alt="Nelbac" 
+              className={`h-6 md:h-8 w-auto transition-all group-hover:scale-105 ${isLight ? 'brightness-0' : 'brightness-100'}`}
+            />
           </a>
 
           {/* Desktop Navigation */}
