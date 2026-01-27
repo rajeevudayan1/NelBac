@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom cursor styles - hide default cursor on interactive elements */
+a, button, .interactive, .glow-link, .card-3d,
+a *, button *, .interactive *, .glow-link *, .card-3d * {
+  cursor: none !important;
+}
+
+/* Ensure the custom cursor is visible above everything */
+.custom-cursor {
+  pointer-events: none;
+  z-index: 9999;
+}

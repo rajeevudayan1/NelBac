@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Page, Product, CartItem } from './types';
 import { PRODUCTS } from './constants';
 import Header from './components/Header';
@@ -9,11 +9,64 @@ import SmartAdvisor from './components/SmartAdvisor';
 
 const hasGeminiKey = Boolean(import.meta.env.GEMINI_API_KEY);
 
+// Custom Cursor Component - Filled circle with arrow, appears on hover with fluid zoom
+const CustomCursor: React.FC<{ isHovering: boolean; position: { x: number; y: number } }> = ({ isHovering, position }) => {
+  return (
+    <div
+      className="fixed pointer-events-none z-[9999]"
+      style={{
+        left: position.x,
+        top: position.y,
+        transform: 'translate(-50%, -50%)',
+      }}
+    >
+      <div 
+        className={`relative flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+          isHovering 
+            ? 'w-8 h-8 opacity-100' 
+            : 'w-0 h-0 opacity-0'
+        }`}
+      >
+        <div 
+          className={`absolute inset-0 bg-[#00f3ff] rounded-full transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+            isHovering ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+          }`}
+          style={{
+            boxShadow: isHovering ? '0 0 15px rgba(0,243,255,0.6), 0 0 30px rgba(0,243,255,0.3)' : 'none'
+          }}
+        />
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          className={`text-black transform -rotate-45 relative z-10 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+            isHovering ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+          }`}
+          style={{
+            transitionDelay: isHovering ? '80ms' : '0ms'
+          }}
+        >
+          <path
+            d="M5 12H19M19 12L12 5M19 12L12 19"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>(Page.Home);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [activeVisionIdx, setActiveVisionIdx] = useState(0);
   const [slideProgress, setSlideProgress] = useState(0); // Progress within current slide (0-100)
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [isHoveringInteractive, setIsHoveringInteractive] = useState(false);
   const visionRef = useRef<HTMLDivElement>(null);
   const productsRef = useRef<HTMLDivElement>(null);
   const isAutoScrolling = useRef(false);
@@ -21,6 +74,76 @@ const App: React.FC = () => {
   const animationFrameRef = useRef<number>(null);
   const lastTimeRef = useRef<number>(null);
   const AUTO_PLAY_DURATION = 5000; // 5 seconds per slide
+
+  // Custom cursor tracking
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setCursorPosition({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const isInteractive = 
+        target.tagName === 'BUTTON' ||
+        target.tagName === 'A' ||
+        target.closest('button') ||
+        target.closest('a') ||
+        target.classList.contains('interactive') ||
+        target.closest('.interactive') ||
+        target.classList.contains('glow-link') ||
+        target.closest('.glow-link') ||
+        target.classList.contains('card-3d') ||
+        target.closest('.card-3d');
+      
+      if (isInteractive) {
+        setIsHoveringInteractive(true);
+      }
+    };
+
+    const handleMouseOut = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const relatedTarget = e.relatedTarget as HTMLElement;
+      
+      const isLeavingInteractive = 
+        target.tagName === 'BUTTON' ||
+        target.tagName === 'A' ||
+        target.closest('button') ||
+        target.closest('a') ||
+        target.classList.contains('interactive') ||
+        target.closest('.interactive') ||
+        target.classList.contains('glow-link') ||
+        target.closest('.glow-link') ||
+        target.classList.contains('card-3d') ||
+        target.closest('.card-3d');
+
+      const isEnteringInteractive = relatedTarget && (
+        relatedTarget.tagName === 'BUTTON' ||
+        relatedTarget.tagName === 'A' ||
+        relatedTarget.closest('button') ||
+        relatedTarget.closest('a') ||
+        relatedTarget.classList.contains('interactive') ||
+        relatedTarget.closest('.interactive') ||
+        relatedTarget.classList.contains('glow-link') ||
+        relatedTarget.closest('.glow-link') ||
+        relatedTarget.classList.contains('card-3d') ||
+        relatedTarget.closest('.card-3d')
+      );
+
+      if (isLeavingInteractive && !isEnteringInteractive) {
+        setIsHoveringInteractive(false);
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseout', handleMouseOut);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseout', handleMouseOut);
+    };
+  }, []);
 
   const visionSections = [
     {
@@ -500,7 +623,8 @@ const App: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)]">
+    <div className="min-h-screen bg-[var(--bg-primary)] cursor-default">
+      <CustomCursor isHovering={isHoveringInteractive} position={cursorPosition} />
       <Header currentPage={currentPage} setCurrentPage={setCurrentPage} cartCount={cartCount} />
       <main>
         {currentPage === Page.Home && renderHome()}
@@ -514,9 +638,18 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-8 text-center">
           <div className="text-3xl font-black font-heading text-[var(--text-primary)] mb-10 tracking-tighter italic">NELBAC // SYSTEMS</div>
           <div className="flex justify-center gap-12 mb-10">
-             <a href="#" className="glow-link text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.2em] ml-4">Documentation</a>
-             <a href="#" className="glow-link text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.2em] ml-4">API Status</a>
-             <a href="#" className="glow-link text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.2em] ml-4">Privacy</a>
+            <span className="glow-link text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.2em] ml-4 flex items-center gap-2">
+              <i className="fas fa-book text-xs"></i>
+              Documentation
+            </span>
+            <span className="glow-link text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.2em] ml-4 flex items-center gap-2">
+              <i className="fas fa-signal text-xs"></i>
+              API Status
+            </span>
+            <span className="glow-link text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.2em] ml-4 flex items-center gap-2">
+              <i className="fas fa-shield-alt text-xs"></i>
+              Privacy
+            </span>
           </div>
           <p className="text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[1em]">© 2024 NELBAC IOT SYSTEMS • AUTOMATE ANYTHING</p>
         </div>

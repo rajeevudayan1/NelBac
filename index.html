@@ -61,34 +61,6 @@
             letter-spacing: -0.05em;
         }
 
-        /* CUSTOM CURSOR - HYBRID DOT */
-        #cursor-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--nelbac-accent);
-            position: fixed;
-            top: 0;
-            left: 0;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            box-shadow: 0 0 10px var(--nelbac-accent), 0 0 20px var(--nelbac-accent);
-            transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
-                        height 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
-                        background 0.2s, 
-                        border 0.2s,
-                        box-shadow 0.2s;
-            will-change: transform;
-        }
-
-        .cursor-hover #cursor-dot {
-            width: 14px;
-            height: 14px;
-            background: transparent;
-            border: 2px solid var(--nelbac-accent);
-            box-shadow: 0 0 15px var(--nelbac-accent);
-        }
-
         .glass {
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
@@ -224,7 +196,6 @@
 </script>
 </head>
 <body class="antialiased overflow-x-hidden">
-    <div id="cursor-dot"></div>
     <div class="scroll-progress" id="scroll-bar"></div>
     <div id="root"></div>
     <script>
@@ -232,35 +203,6 @@
         if (savedTheme === 'light') {
             document.documentElement.classList.add('light');
         }
-
-        const dot = document.getElementById('cursor-dot');
-        let mouseX = 0;
-        let mouseY = 0;
-        let dotX = 0;
-        let dotY = 0;
-
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            const target = e.target;
-            const interactiveEl = target.closest('a, button, .interactive, .glow-link');
-            if (interactiveEl) {
-                document.body.classList.add('cursor-hover');
-            } else {
-                document.body.classList.remove('cursor-hover');
-            }
-        });
-
-        const animateCursor = () => {
-            const easing = 0.15;
-            dotX += (mouseX - dotX) * easing;
-            dotY += (mouseY - dotY) * easing;
-            const isHover = document.body.classList.contains('cursor-hover');
-            const offset = isHover ? 7 : 4;
-            dot.style.transform = `translate3d(${dotX - offset}px, ${dotY - offset}px, 0)`;
-            requestAnimationFrame(animateCursor);
-        };
-        animateCursor();
     </script>
     <script type="module" src="/index.tsx"></script>
     <script>
