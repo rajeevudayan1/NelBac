@@ -97,11 +97,24 @@
         }
 
         html.light .vision-heading-box {
-            background: radial-gradient(circle at left, rgba(255,255,255,0.3) 0%, transparent 70%);
+            background: radial-gradient(circle at left, rgba(0,0,0,0.55) 0%, transparent 70%);
         }
 
         .vision-heading-box h2 {
             text-shadow: var(--heading-shadow);
+        }
+
+        html.light .vision-heading-box h2 {
+            color: #ffffff !important;
+        }
+
+        html.light .vision-heading-box h3 {
+            color: #e2e8f0 !important;
+        }
+
+        html.light .vision-heading-box span {
+            color: #00f3ff !important;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
         }
 
         .glow-link {
@@ -152,6 +165,11 @@
         @keyframes grid-move {
             0% { transform: rotateX(75deg) translateY(0); }
             100% { transform: rotateX(75deg) translateY(35px); }
+        }
+
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-20px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .scroll-progress {
