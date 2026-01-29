@@ -4,66 +4,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nelbac IoT | Automate Anything</title>
+    <title>Nelbac IoT | Premium Industrial Automation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #01040a;
-            --bg-secondary: #020617;
-            --text-primary: #ffffff;
+            --bg-primary: #020617;
+            --bg-secondary: #01040a;
+            --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --accent-solid: #00f3ff;
-            --glass-bg: rgba(255, 255, 255, 0.01);
             --border-primary: rgba(0, 243, 255, 0.15);
-            --border-secondary: rgba(0, 243, 255, 0.05);
-            --nelbac-accent: #00f3ff;
-            --bg-img-brightness: 0.35;
-            --overlay-text: #ffffff;
-            --vision-card-bg: rgba(255, 255, 255, 0.03);
-            --vision-card-text: #ffffff;
-            --vision-card-secondary: #94a3b8;
-            --vision-card-glow: 0 0 30px rgba(0, 243, 255, 0.1);
-            --vision-card-border: rgba(0, 243, 255, 0.2);
-            --heading-shadow: 0 0 30px rgba(0,0,0,0.5);
-        }
-
-        html.light {
-            --bg-primary: #f8fafc;
-            --bg-secondary: #ffffff;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --accent-solid: #0369a1; 
-            --glass-bg: rgba(255, 255, 255, 0.85);
-            --border-primary: rgba(15, 23, 42, 0.12);
-            --border-secondary: rgba(15, 23, 42, 0.06);
-            --bg-img-brightness: 0.85; 
-            --overlay-text: #0f172a;
-            --vision-card-bg: rgba(0, 0, 0, 0.45); 
-            --vision-card-text: #ffffff;
-            --vision-card-secondary: #e2e8f0;
-            --vision-card-glow: 0 30px 60px -12px rgba(0, 0, 0, 0.4), 0 0 50px rgba(0, 243, 255, 0.6);
-            --vision-card-border: rgba(0, 243, 255, 0.8);
-            --heading-shadow: 0 0 20px rgba(255,255,255,0.4);
+            --border-secondary: rgba(255, 255, 255, 0.05);
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            scroll-behavior: smooth;
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            transition: background-color 0.5s ease, color 0.5s ease;
-            cursor: auto;
+            overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        /* HIDE SYSTEM CURSOR ON HOVER */
-        body.cursor-active, 
-        body.cursor-active * {
-            cursor: none !important;
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 243, 255, 0.01) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 100;
         }
 
-        /* CUSTOM CURSOR - DECORATIVE HOVER ONLY */
+        .glass {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-primary);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, var(--accent-solid) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes float-up {
+            0% { 
+                transform: translateY(0) translateX(0) scale(1); 
+                opacity: 0; 
+            }
+            10% { opacity: 0.6; }
+            50% { transform: translateY(-50vh) translateX(30px) scale(1.2); }
+            90% { opacity: 0.6; }
+            100% { 
+                transform: translateY(-120vh) translateX(-20px) scale(1.5); 
+                opacity: 0; 
+            }
+        }
+
+        .animate-float-up {
+            animation: float-up linear infinite;
+        }
+
+        .bubble-shine::after {
+            content: "";
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 20%;
+            height: 20%;
+            background: white;
+            border-radius: 50%;
+            filter: blur(2px);
+            opacity: 0.6;
+        }
+
         #cursor-wrapper {
             position: fixed;
             top: 0;
@@ -78,147 +99,25 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 0px; 
-            height: 0px;
-            background: #fff;
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--accent-solid);
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            mix-blend-mode: difference;
-            transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1), 
-                        height 0.4s cubic-bezier(0.23, 1, 0.32, 1), 
-                        opacity 0.3s ease;
+            transition: width 0.3s ease, height 0.3s ease, background 0.3s ease;
+            pointer-events: none;
+            opacity: 0;
             display: flex;
-            align-items: center;
+            align-items: center;0
             justify-content: center;
-            overflow: hidden;
-            pointer-events: none;
-            opacity: 0;
         }
 
-        .custom-cursor i {
-            font-size: 10px; /* Adjusted for smaller circle */
-            color: #000;
-            opacity: 0;
-            transform: scale(0.5);
-            transition: all 0.3s ease 0.1s;
-        }
-
-        /* Cursor States - Reduced to half size (30px instead of 60px) */
         body.cursor-active .custom-cursor {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
+            background: var(--accent-solid);
             opacity: 1;
-        }
-
-        body.cursor-active .custom-cursor i {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        h1, h2, h3, .font-heading {
-            font-family: 'Space Grotesk', sans-serif;
-            letter-spacing: -0.05em;
-        }
-
-        .glass {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border-primary);
-        }
-
-        .vision-card {
-            background: var(--vision-card-bg) !important;
-            backdrop-filter: blur(32px);
-            -webkit-backdrop-filter: blur(32px);
-            border: 1px solid var(--vision-card-border);
-            box-shadow: var(--vision-card-glow);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            color: var(--vision-card-text) !important;
-        }
-
-        .vision-card p {
-            color: var(--vision-card-secondary) !important;
-        }
-
-        .glow-link {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .glow-link:hover {
-            color: var(--nelbac-accent) !important;
-            transform: translateX(8px);
-        }
-
-        .text-gradient {
-            background: linear-gradient(135deg, var(--text-primary) 20%, var(--nelbac-accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-grid-container {
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            perspective: 1200px;
-            overflow: hidden;
-        }
-
-        .grid-3d-floor {
-            position: absolute;
-            width: 400%;
-            height: 400%;
-            top: 30%;
-            left: -150%;
-            background-image: 
-                linear-gradient(var(--nelbac-accent) 1px, transparent 1px),
-                linear-gradient(90deg, var(--nelbac-accent) 1px, transparent 1px);
-            background-size: 35px 35px;
-            transform: rotateX(75deg);
-            transform-origin: top center;
-            opacity: 0.3;
-            animation: grid-move 15s linear infinite;
-            mask-image: radial-gradient(ellipse at center, black 10%, transparent 70%);
-            -webkit-mask-image: radial-gradient(ellipse at center, black 10%, transparent 70%);
-        }
-
-        @keyframes grid-move {
-            0% { transform: rotateX(75deg) translateY(0); }
-            100% { transform: rotateX(75deg) translateY(35px); }
-        }
-
-        .scroll-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 3px;
-            background: linear-gradient(to right, var(--nelbac-accent), #3b82f6);
-            z-index: 1000;
-            box-shadow: 0 0 10px var(--nelbac-accent);
-        }
-
-        .reveal-on-scroll {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .reveal-on-scroll.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        .animate-float {
-            animation: float 5s ease-in-out infinite;
+            border: none;
         }
     </style>
 <script type="importmap">
@@ -232,80 +131,36 @@
 }
 </script>
 </head>
-<body class="antialiased overflow-x-hidden">
-    <!-- Custom cursor wrapper for hover animation -->
+<body>
     <div id="cursor-wrapper">
-        <div class="custom-cursor" id="main-cursor">
-            <i id="cursor-icon" class="fas fa-plus"></i>
-        </div>
+        <div class="custom-cursor" id="main-cursor"></div>
     </div>
-
-    <div class="scroll-progress" id="scroll-bar"></div>
     <div id="root"></div>
     <script>
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            document.documentElement.classList.add('light');
-        }
-
         const cursor = document.getElementById('main-cursor');
-        const cursorIcon = document.getElementById('cursor-icon');
-        
-        let mouse = { x: 0, y: 0 };
-        let pos = { x: 0, y: 0 };
-        const speed = 0.2; // Smoothness factor
+        let mouse = { x: -100, y: -100 };
+        let pos = { x: -100, y: -100 };
 
         window.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
-
-            // Detect if hovering over something clickable
-            const target = e.target;
-            const interactiveEl = target.closest('a, button, .interactive, .glow-link, [data-cursor]');
+            cursor.style.opacity = "1";
             
-            if (interactiveEl) {
+            const interactive = e.target.closest('a, button, .interactive');
+            if (interactive) {
                 document.body.classList.add('cursor-active');
-                
-                // Determine icon based on element type
-                const cursorData = interactiveEl.getAttribute('data-cursor');
-                if (cursorData === 'view') {
-                    cursorIcon.className = 'fas fa-expand';
-                } else if (cursorData === 'add') {
-                    cursorIcon.className = 'fas fa-plus';
-                } else {
-                    cursorIcon.className = 'fas fa-arrow-right';
-                }
             } else {
                 document.body.classList.remove('cursor-active');
             }
         });
 
-        // Animation loop for smooth cursor lag
         const updateCursor = () => {
-            pos.x += (mouse.x - pos.x) * speed;
-            pos.y += (mouse.y - pos.y) * speed;
-            
+            pos.x += (mouse.x - pos.x) * 0.15;
+            pos.y += (mouse.y - pos.y) * 0.15;
             cursor.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0) translate(-50%, -50%)`;
             requestAnimationFrame(updateCursor);
         };
         updateCursor();
-
-        window.onscroll = function() {
-            var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            var scrolled = (winScroll / height) * 100;
-            const bar = document.getElementById("scroll-bar");
-            if (bar) bar.style.width = scrolled + "%";
-
-            const reveals = document.querySelectorAll('.reveal-on-scroll');
-            reveals.forEach(el => {
-                const windowHeight = window.innerHeight;
-                const elementTop = el.getBoundingClientRect().top;
-                if (elementTop < windowHeight - 50) {
-                    el.classList.add('active');
-                }
-            });
-        };
     </script>
 </body>
 </html>
