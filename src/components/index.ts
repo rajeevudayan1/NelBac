@@ -5,6 +5,7 @@ export { default as Footer } from './layout/Footer';
 // Section Components
 export { default as Hero } from './sections/Hero';
 export { default as AboutUs } from './sections/AboutUs';
+export { default as VisionOrbit } from './sections/VisionOrbit';
 
 // UI Components
 export { default as ProductCard } from './ui/ProductCard';

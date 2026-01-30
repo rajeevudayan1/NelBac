@@ -1,159 +1,76 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Page, Product, CartItem } from '@/types';
-import { PRODUCTS, VISION_SECTIONS, AUTO_PLAY_DURATION, TESTIMONIALS } from '@/constants.ts';
-import { Header, Footer, Hero, ProductCard, CustomCursor, SplashScreen, AboutUs } from '@/components';
+import { PRODUCTS, VISION_SECTIONS, TESTIMONIALS } from '@/constants.ts';
+import { Header, Footer, Hero, ProductCard, CustomCursor, SplashScreen, AboutUs, VisionOrbit } from '@/components';
 import { useCustomCursor } from '@/hooks/useCustomCursor';
 
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [currentPage, setCurrentPage] = useState<Page>(Page.Home);
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [activeVisionIdx, setActiveVisionIdx] = useState(0);
-  const [slideProgress, setSlideProgress] = useState(0);
+  const [activeSection, setActiveSection] = useState<'hero' | 'vision' | 'rest'>('hero');
   const { position: cursorPosition, isHovering: isHoveringInteractive } = useCustomCursor();
   
-  const visionRef = useRef<HTMLDivElement>(null);
   const productsRef = useRef<HTMLDivElement>(null);
+  const visionRef = useRef<HTMLDivElement>(null);
   const isAutoScrolling = useRef(false);
-  const lastSnapTime = useRef<number>(0);
-  const animationFrameRef = useRef<number>(null);
-  const lastTimeRef = useRef<number>(null);
 
   // Scroll to top when page changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
+    setActiveSection('hero');
   }, [currentPage]);
+
+  // Track which section user is in based on scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isAutoScrolling.current || !visionRef.current) return;
+      
+      const scrollY = window.scrollY;
+      const visionTop = visionRef.current.offsetTop;
+      const visionHeight = visionRef.current.offsetHeight;
+      
+      if (scrollY < visionTop * 0.5) {
+        setActiveSection('hero');
+      } else if (scrollY < visionTop + visionHeight * 0.5) {
+        setActiveSection('vision');
+      } else {
+        setActiveSection('rest');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Paginated Hero-to-Vision Snap (Desktop Only)
   useEffect(() => {
     const handleHeroSnap = (e: WheelEvent) => {
       if (window.innerWidth < 1024 || currentPage !== Page.Home || isAutoScrolling.current || !visionRef.current) return;
 
-      const now = Date.now();
-      if (now - lastSnapTime.current < 1200) return;
-
-      const scrollY = window.scrollY;
       const visionTop = visionRef.current.offsetTop;
-      const snapThreshold = 15;
 
-      if (scrollY < snapThreshold && e.deltaY > 30) {
+      // At hero and scrolling down → snap to vision
+      if (activeSection === 'hero' && e.deltaY > 20) {
         e.preventDefault();
         isAutoScrolling.current = true;
-        lastSnapTime.current = now;
+        setActiveSection('vision');
         window.scrollTo({ top: visionTop, behavior: 'smooth' });
-        setTimeout(() => { isAutoScrolling.current = false; }, 1000);
+        setTimeout(() => { isAutoScrolling.current = false; }, 800);
       } 
-      else if (activeVisionIdx === 0 && scrollY >= visionTop - snapThreshold && scrollY <= visionTop + snapThreshold && e.deltaY < -30) {
+      // At vision section and scrolling up → snap back to hero
+      else if (activeSection === 'vision' && e.deltaY < -20) {
         e.preventDefault();
         isAutoScrolling.current = true;
-        lastSnapTime.current = now;
+        setActiveSection('hero');
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(() => { isAutoScrolling.current = false; }, 1000);
+        setTimeout(() => { isAutoScrolling.current = false; }, 800);
       }
     };
 
     window.addEventListener('wheel', handleHeroSnap, { passive: false });
     return () => window.removeEventListener('wheel', handleHeroSnap);
-  }, [currentPage, activeVisionIdx]);
-
-  // Manual Scroll Handling
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!visionRef.current || isAutoScrolling.current) return;
-      
-      const rect = visionRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const scrollableRange = rect.height - viewportHeight;
-      
-      if (rect.top > viewportHeight || rect.bottom < 0) return;
-
-      const scrollProgress = Math.max(0, Math.min(1, -rect.top / scrollableRange));
-      const totalSlides = VISION_SECTIONS.length;
-      const rawIndex = scrollProgress * totalSlides;
-      const index = Math.min(Math.floor(rawIndex), totalSlides - 1);
-      const subProgress = (rawIndex % 1) * 100;
-      
-      setActiveVisionIdx(index);
-      setSlideProgress(subProgress);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [VISION_SECTIONS.length]);
-
-  const scrollToSlide = (index: number) => {
-    if (!visionRef.current || isAutoScrolling.current) return;
-    
-    isAutoScrolling.current = true;
-    setActiveVisionIdx(index);
-    setSlideProgress(0);
-
-    const totalHeight = visionRef.current.offsetHeight;
-    const viewportHeight = window.innerHeight;
-    const scrollableRange = totalHeight - viewportHeight;
-    const segmentSize = scrollableRange / VISION_SECTIONS.length;
-    const target = visionRef.current.offsetTop + (index * segmentSize);
-
-    window.scrollTo({ top: target, behavior: 'smooth' });
-
-    setTimeout(() => {
-      isAutoScrolling.current = false;
-      lastTimeRef.current = performance.now();
-    }, 800);
-  };
-
-  const skipToHardware = () => {
-    if (!productsRef.current) return;
-    isAutoScrolling.current = true;
-    productsRef.current.scrollIntoView({ behavior: 'smooth' });
-    setTimeout(() => { isAutoScrolling.current = false; }, 1000);
-  };
-
-  const handleNext = () => {
-    const nextIdx = (activeVisionIdx + 1) % VISION_SECTIONS.length;
-    scrollToSlide(nextIdx);
-  };
-
-  const handlePrev = () => {
-    const prevIdx = (activeVisionIdx - 1 + VISION_SECTIONS.length) % VISION_SECTIONS.length;
-    scrollToSlide(prevIdx);
-  };
-
-  // Auto-Play
-  useEffect(() => {
-    const animate = (time: number) => {
-      if (!visionRef.current || currentPage !== Page.Home || isAutoScrolling.current) {
-        animationFrameRef.current = requestAnimationFrame(animate);
-        return;
-      }
-
-      if (lastTimeRef.current === null) lastTimeRef.current = time;
-      const deltaTime = time - lastTimeRef.current;
-      
-      const rect = visionRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-
-      if (Math.abs(rect.top) < 10 && rect.bottom >= viewportHeight - 10) {
-        setSlideProgress(prev => {
-          const increment = (deltaTime / AUTO_PLAY_DURATION) * 100;
-          const next = prev + increment;
-          if (next >= 100) {
-            handleNext();
-            return 100;
-          }
-          return next;
-        });
-      }
-      
-      lastTimeRef.current = time;
-      animationFrameRef.current = requestAnimationFrame(animate);
-    };
-
-    animationFrameRef.current = requestAnimationFrame(animate);
-    return () => {
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-    };
-  }, [activeVisionIdx, VISION_SECTIONS.length, currentPage]);
+  }, [currentPage, activeSection]);
 
   const addToCart = (product: Product) => {
     setCart(prev => {
@@ -178,157 +95,15 @@ const App: React.FC = () => {
 
   const cartTotal = cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
-  const totalBarWidth = ((activeVisionIdx + (slideProgress / 100)) / VISION_SECTIONS.length) * 100;
 
   const renderHome = () => (
     <>
       <Hero onExplore={setCurrentPage} />
       
-      <section 
-        ref={visionRef} 
-        className="relative w-full bg-[var(--bg-primary)]"
-        style={{ height: `${VISION_SECTIONS.length * 60}vh` }} 
-      >
-        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
-          <div className="absolute inset-0 z-0">
-            {VISION_SECTIONS.map((section, idx) => (
-              <div 
-                key={idx}
-                className={`absolute inset-0 transition-all duration-500 ease-in-out ${idx === activeVisionIdx ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}
-              >
-                <img 
-                  src={section.image} 
-                  className="w-full h-full object-cover absolute inset-0" 
-                  style={{ filter: `brightness(var(--bg-img-brightness, 0.7))` }} 
-                  alt="" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg-primary)] via-transparent to-transparent opacity-30"></div>
-                <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg-primary)] via-transparent to-[var(--bg-primary)] opacity-40"></div>
-              </div>
-            ))}
-          </div>
-
-          <div className="absolute top-24 md:top-32 left-0 right-0 z-20 pointer-events-none">
-            <div className="max-w-7xl mx-auto px-4 md:px-8">
-              <div className="w-full h-[3px] bg-[var(--text-primary)]/10 rounded-full relative overflow-hidden">
-                <div 
-                  className="absolute inset-y-0 left-0 bg-[var(--accent-solid)] shadow-[0_0_200px_rgba(0,243,255,0.8)]"
-                  style={{ 
-                    width: `${totalBarWidth}%`,
-                    transition: isAutoScrolling.current ? 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)' : 'none' 
-                  }}
-                ></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative z-10 w-full h-full max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-20 items-center justify-center px-6 md:px-16 pt-20 lg:pt-0">
-            <div className="absolute top-36 md:top-48 left-6 md:left-16 flex items-center gap-4 md:gap-6 z-30">
-              <button 
-                onClick={handlePrev}
-                className="interactive group w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-[var(--border-primary)] flex items-center justify-center text-[var(--text-primary)] hover:border-[var(--accent-solid)] hover:bg-[var(--accent-solid)] hover:text-black transition-all shadow-xl active:scale-90"
-              >
-                <i className="fas fa-arrow-left text-sm md:text-base group-hover:-translate-x-1 transition-transform"></i>
-              </button>
-              <button 
-                onClick={handleNext}
-                className="interactive group w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-[var(--border-primary)] flex items-center justify-center text-[var(--text-primary)] hover:border-[var(--accent-solid)] hover:bg-[var(--accent-solid)] hover:text-black transition-all shadow-xl active:scale-90"
-              >
-                <i className="fas fa-arrow-right text-sm md:text-base group-hover:translate-x-1 transition-transform"></i>
-              </button>
-              
-              <button 
-                onClick={skipToHardware}
-                className="interactive group flex items-center gap-3 px-6 h-12 md:h-16 rounded-full glass border border-[var(--border-primary)] text-[var(--text-primary)] hover:border-[var(--accent-solid)] hover:bg-[var(--accent-solid)] hover:text-black transition-all shadow-xl active:scale-90 ml-2 md:ml-4"
-              >
-                <span className="hidden md:block text-[10px] font-black uppercase tracking-[0.3em]">Skip to Products</span>
-                <span className="md:hidden text-[9px] font-black uppercase tracking-widest">Skip</span>
-                <i className="fas fa-angles-down text-xs group-hover:translate-y-1 transition-transform"></i>
-              </button>
-            </div>
-
-            <div className="relative w-full h-[25vh] md:h-[30vh] lg:h-[60vh] flex flex-col justify-center">
-              {VISION_SECTIONS.map((section, idx) => (
-                <div 
-                  key={idx}
-                  className={`absolute inset-0 flex flex-col justify-center transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                    idx === activeVisionIdx 
-                    ? 'opacity-100 translate-y-0' 
-                    : idx < activeVisionIdx 
-                      ? 'opacity-0 -translate-y-10 lg:-translate-y-20' 
-                      : 'opacity-0 translate-y-10 lg:translate-y-20'
-                  }`}
-                >
-                  <div className="vision-heading-box">
-                    <div className="flex items-center gap-4 md:gap-6 mb-3 md:mb-6">
-                      <div className="w-8 md:w-12 h-1 bg-[var(--accent-solid)] shadow-[0_0_15px_rgba(0,243,255,0.4)]"></div>
-                      <span className="text-[var(--accent-solid)] font-black text-[9px] md:text-[11px] tracking-[0.4em] md:tracking-[0.6em] uppercase">Product Highlights</span>
-                    </div>
-                    <h2 className="text-4xl md:text-7xl lg:text-8xl font-black font-heading text-[var(--text-primary)] uppercase italic leading-[0.85] tracking-tighter">
-                      {section.title}
-                    </h2>
-                    <h3 className="text-sm md:text-2xl font-light text-[var(--text-secondary)] uppercase tracking-[0.2em] md:tracking-[0.3em] italic mt-3 md:mt-8">
-                      {section.subtitle}
-                    </h3>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="relative w-full h-[35vh] md:h-[40vh] lg:h-[50vh] flex items-center">
-              <div className="vision-card w-full rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 relative overflow-hidden flex flex-col justify-center min-h-[220px] md:min-h-[300px] shadow-2xl">
-                <div className="absolute top-6 left-6 w-4 h-4 border-t border-l border-[var(--accent-solid)]/30"></div>
-                <div className="absolute bottom-6 right-6 w-4 h-4 border-b border-r border-[var(--accent-solid)]/30"></div>
-
-                {VISION_SECTIONS.map((section, idx) => (
-                  <div 
-                    key={idx}
-                    className={`absolute inset-x-8 md:inset-x-16 top-1/2 -translate-y-1/2 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                      idx === activeVisionIdx 
-                      ? 'opacity-100 translate-x-0' 
-                      : idx < activeVisionIdx 
-                        ? 'opacity-0 -translate-x-12' 
-                        : 'opacity-0 translate-x-12'
-                    }`}
-                  >
-                    <p className="text-sm md:text-xl font-light leading-relaxed mb-6 md:mb-12">
-                      {section.content}
-                    </p>
-
-                    <div className="flex items-center gap-4 md:gap-8">
-                      <span className="index-text font-black font-heading text-lg md:text-2xl italic">0{idx+1}</span>
-                      <div className="flex-1 h-[2px] bg-[var(--text-primary)]/10 rounded-full relative overflow-hidden">
-                        <div 
-                          className="absolute inset-y-0 left-0 bg-[var(--accent-solid)] shadow-[0_0_15px_rgba(0,243,255,0.3)]"
-                          style={{ 
-                            width: `${idx === activeVisionIdx ? slideProgress : (idx < activeVisionIdx ? 100 : 0)}%`,
-                            transition: isAutoScrolling.current ? 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)' : 'none'
-                          }}
-                        ></div>
-                      </div>
-                      <span className="index-text font-black font-heading text-lg md:text-2xl italic">0{VISION_SECTIONS.length}</span>
-                    </div>
-                  </div>
-                ))}
-
-                <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 hidden sm:flex flex-col gap-3 md:gap-4">
-                   {VISION_SECTIONS.map((_, dotIdx) => (
-                     <div 
-                       key={dotIdx}
-                       className={`interactive w-1 transition-all duration-300 rounded-full cursor-none hover:bg-[var(--accent-solid)]/50 ${
-                         dotIdx === activeVisionIdx 
-                         ? 'h-8 md:h-12 bg-[var(--accent-solid)] shadow-[0_0_10px_rgba(0,243,255,0.4)]' 
-                         : 'h-2 md:h-3 bg-[var(--text-primary)]/10'
-                       }`}
-                       onClick={() => scrollToSlide(dotIdx)}
-                     />
-                   ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Vision Orbit Section - Orbital Carousel Design */}
+      <div ref={visionRef}>
+        <VisionOrbit visionSections={VISION_SECTIONS} />
+      </div>
 
       {/* Testimonials Section */}
       <section className="py-24 md:py-40 bg-[var(--bg-secondary)] border-y border-[var(--border-secondary)] relative overflow-hidden">
