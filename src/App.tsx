@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Page, Product, CartItem } from '@/types';
 import { PRODUCTS, VISION_SECTIONS, AUTO_PLAY_DURATION, TESTIMONIALS } from '@/constants.ts';
-import { Header, Footer, Hero, ProductCard, CustomCursor, SplashScreen, AboutUs } from '@/components';
+import { Header, Footer, Hero, ProductCard, CustomCursor, SplashScreen, AboutUs, ProductDetails } from '@/components';
 import { useCustomCursor } from '@/hooks/useCustomCursor';
 
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [currentPage, setCurrentPage] = useState<Page>(Page.Home);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [activeVisionIdx, setActiveVisionIdx] = useState(0);
   const [slideProgress, setSlideProgress] = useState(0);
@@ -447,7 +448,7 @@ const App: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
              {PRODUCTS.map(product => (
                <div key={product.id} className="reveal-on-scroll">
-                  <ProductCard product={product} onAddToCart={addToCart} />
+                  <ProductCard product={product} onAddToCart={addToCart} onViewDetails={(p) => { setSelectedProduct(p); setCurrentPage(Page.ProductDetail); }} />
                </div>
              ))}
           </div>
@@ -463,7 +464,7 @@ const App: React.FC = () => {
           <h1 className="text-8xl md:text-[140px] font-black font-heading text-[var(--text-primary)] mb-16 uppercase italic leading-[0.8] tracking-tighter">THE<br/><span className="not-italic text-gradient">CATALOG.</span></h1>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-           {PRODUCTS.map(p => <ProductCard key={p.id} product={p} onAddToCart={addToCart} />)}
+           {PRODUCTS.map(p => <ProductCard key={p.id} product={p} onAddToCart={addToCart} onViewDetails={(p) => { setSelectedProduct(p); setCurrentPage(Page.ProductDetail); }} />)}
         </div>
       </div>
     </section>
@@ -528,6 +529,14 @@ const App: React.FC = () => {
       <main>
         {currentPage === Page.Home && renderHome()}
         {currentPage === Page.Products && renderProducts()}
+        {currentPage === Page.ProductDetail && selectedProduct && (
+          <ProductDetails 
+            product={selectedProduct} 
+            onAddToCart={addToCart} 
+            onNavigate={setCurrentPage}
+            onSelectProduct={(p) => { setSelectedProduct(p); setCurrentPage(Page.ProductDetail); }}
+          />
+        )}
         {currentPage === Page.AboutUs && <AboutUs onNavigate={setCurrentPage} />}
         {currentPage === Page.Cart && renderCart()}
       </main>

@@ -4,9 +4,10 @@ import { Product } from '@/types';
 interface ProductCardProps {
   product: Product;
   onAddToCart: (p: Product) => void;
+  onViewDetails?: (p: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onViewDetails }) => {
   const [videoError, setVideoError] = useState(false);
 
   return (
@@ -69,6 +70,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
           <span className="relative z-10">Add to Queue</span>
           <div className="absolute inset-0 bg-[#00f3ff] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-expo"></div>
         </button>
+        
+        {onViewDetails && (
+          <button 
+            onClick={() => onViewDetails(product)}
+            className="mt-3 group relative w-full glass border border-[var(--border-primary)] text-[var(--text-primary)] font-black py-4 rounded-2xl transition-all hover:border-[#00f3ff]/50 hover:bg-[var(--text-primary)]/5 flex items-center justify-center gap-3 uppercase text-[9px] tracking-[0.4em] active:scale-95"
+          >
+            <span>View Details</span>
+            <i className="fas fa-arrow-right text-[8px] group-hover:translate-x-1 transition-transform"></i>
+          </button>
+        )}
       </div>
     </div>
   );

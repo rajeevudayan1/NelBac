@@ -56,6 +56,7 @@ export type NavItem = string;
 export enum Page {
   Home = 'home',
   Products = 'products',
+  ProductDetail = 'product-detail',
   Services = 'services',
   Blog = 'blog',
   Cart = 'cart',

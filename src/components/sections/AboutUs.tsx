@@ -157,7 +157,7 @@ const AboutUs: React.FC<AboutUsProps> = ({ onNavigate }) => {
               <div className="flex items-center gap-4 overflow-hidden">
                 <div className="h-px w-0 bg-[var(--accent-solid)] animate-[expandWidth_1s_ease-out_0.5s_forwards] shadow-[0_0_15px_rgba(0,243,255,0.6)]"></div>
                 <span className="text-[var(--accent-solid)] font-black text-[10px] md:text-[11px] tracking-[0.5em] uppercase opacity-0 animate-[fadeInUp_0.8s_ease-out_0.8s_forwards]">
-                  BANGALORE • EST. 2018
+                  BANGALORE • EST. 2020
                 </span>
               </div>
 
@@ -242,7 +242,7 @@ const AboutUs: React.FC<AboutUsProps> = ({ onNavigate }) => {
                     <div className="bg-[var(--text-primary)]/5 rounded-2xl p-4 border border-[var(--border-secondary)]">
                       <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--accent-solid)] block mb-2">RECOGNITION</span>
                       <div className="flex flex-wrap gap-2">
-                        {['DPIIT', 'MSME', 'UAS'].map(tag => (
+                      {['IIT Bombay', 'Eureka', 'RKVY'].map(tag => (
                           <span key={tag} className="px-3 py-1 bg-[#00f3ff]/10 text-[#00f3ff] text-[9px] font-black rounded-full">
                             {tag}
                           </span>
