@@ -13,17 +13,17 @@ export const NAV_ITEMS = ['Home', 'Products', 'About Us', 'Blog'];
 export const COMPANY_INFO = {
   name: 'Nelbac',
   tagline: 'Automate Anything.',
-  founded: '2018',
+  founded: '2020',
   location: 'Bangalore, India',
-  description: 'Nelbac is a Bangalore-based company developing irrigation controllers. We help the irrigation management of landscape designers, homeowners, property owners, and other customers.',
-  fullDescription: 'The company was incorporated in 2018 and is a recognized start-up under Start-up India Department for Promotion of Industry and Internal Trade (DPIIT), Government of India, and also registered under MSME. The start-up is incubated at the University of Agricultural Sciences, Dharwad and NaaViC (Agri Business Incubation Centre), ICAR-NIVEDI.',
+  description: 'Nelbac is a Bangalore-based emerging technology startup focused on developing next-generation automation controllers for landscape designers, homeowners, property owners, and agricultural customers.',
+  fullDescription: 'Founded in 2020, Nelbac has been recognized by leading institutions including Pitch Perfect (IIT Bombay), IITB Eureka Finalist 2021, and awarded the RKVY RAFTAR Grant from the Government of India. During the Covid slowdown, we strategically prioritized product development and compliance — resulting in one published patent (under examination), one provisional patent filed, and a granted design patent and trademark. Today, Nelbac is re-entering the market with an advanced version of our automation controller, with strong early traction and pre-bookings validating both product-market fit and customer demand.',
   mission: 'Make the farm automation technologies aspirational for small holders to take up agriculture as a business.',
   whoWeAre: 'A team of engineers aiming to find solutions for small/marginal farm, landscaping and home garden automation.',
   whatWeDo: 'Our focus is on developing automation devices for small/marginal farms, urban home gardens, vertical gardens, hydroponics and aquaponics.',
 };
 
 export const COMPANY_STATS = [
-  { value: '2018', label: 'Founded', suffix: '' },
+  { value: '2020', label: 'Founded', suffix: '' },
   { value: '5+', label: 'Years Experience', suffix: '' },
   { value: '1000+', label: 'Devices Deployed', suffix: '' },
   { value: '99.9', label: 'Uptime', suffix: '%' },
@@ -54,53 +54,48 @@ export const COMPANY_VALUES = [
 
 export const MILESTONES: Milestone[] = [
   {
-    year: '2018',
-    title: 'Company Founded',
-    description: 'Nelbac incorporated in Bangalore with a vision to revolutionize irrigation automation.'
-  },
-  {
-    year: '2019',
-    title: 'DPIIT Recognition',
-    description: 'Recognized as a start-up under Start-up India, Department for Promotion of Industry and Internal Trade.'
-  },
-  {
     year: '2020',
-    title: 'MSME Registration',
-    description: 'Registered under MSME, strengthening our commitment to small-scale enterprise development.'
+    title: 'Company Founded',
+    description: 'Nelbac incorporated in Bangalore as an emerging technology startup focused on next-generation automation controllers.'
   },
   {
     year: '2021',
-    title: 'Incubation Partnership',
-    description: 'Incubated at University of Agricultural Sciences, Dharwad for agricultural innovation.'
+    title: 'Industry Recognition',
+    description: 'Recognized at Pitch Perfect (IIT Bombay) and selected as IITB Eureka Finalist 2021.'
   },
   {
     year: '2022',
-    title: 'NaaViC Integration',
-    description: 'Partnered with ICAR-NIVEDI\'s Agri Business Incubation Centre for expanded R&D.'
+    title: 'RKVY RAFTAR Grant',
+    description: 'Awarded the RKVY RAFTAR Grant from the Government of India for agricultural innovation.'
   },
   {
-    year: '2024',
-    title: 'NC Controller Launch',
-    description: 'Launched the flagship Nelbac Controller - our most advanced irrigation automation system.'
+    year: '2023',
+    title: 'IP & Compliance Milestones',
+    description: 'Published patent (under examination), filed provisional patent, and secured a granted design patent and trademark.'
+  },
+  {
+    year: '2025',
+    title: 'Market Re-entry',
+    description: 'Re-entering the market with an advanced automation controller. Strong early traction with pre-bookings validating product-market fit.'
   }
 ];
 
 export const PARTNERS: Partner[] = [
   {
+    name: 'Pitch Perfect (IIT Bombay)',
+    description: 'Recognized at IIT Bombay\'s startup pitch competition'
+  },
+  {
+    name: 'IITB Eureka',
+    description: 'Finalist at IITB Eureka 2021 — one of India\'s premier startup competitions'
+  },
+  {
+    name: 'RKVY RAFTAR Grant',
+    description: 'Awarded by the Government of India for agri-tech innovation'
+  },
+  {
     name: 'Start-up India (DPIIT)',
     description: 'Department for Promotion of Industry and Internal Trade, Government of India'
-  },
-  {
-    name: 'MSME',
-    description: 'Ministry of Micro, Small and Medium Enterprises, Government of India'
-  },
-  {
-    name: 'UAS Dharwad',
-    description: 'University of Agricultural Sciences, Dharwad - Incubation Partner'
-  },
-  {
-    name: 'NaaViC',
-    description: 'Agri Business Incubation Centre, ICAR-NIVEDI'
   }
 ];
 
@@ -339,6 +334,6 @@ export const SEARCHABLE_CONTENT: SearchableItem[] = [
   { title: 'Resource Efficiency', description: 'Conserve water with precise scheduling', category: 'feature', targetPage: Page.Home },
   // About Us related
   { title: 'Our Mission', description: 'Make farm automation aspirational for small holders', category: 'feature', targetPage: Page.AboutUs },
-  { title: 'DPIIT Recognized', description: 'Start-up India recognized company', category: 'feature', targetPage: Page.AboutUs },
+  { title: 'Award Winning', description: 'Recognized at Pitch Perfect (IIT Bombay), IITB Eureka 2021, and RKVY RAFTAR Grant recipient', category: 'feature', targetPage: Page.AboutUs },
   { title: 'Bangalore', description: 'Nelbac headquarters location', category: 'feature', targetPage: Page.AboutUs },
 ];
