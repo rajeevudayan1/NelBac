@@ -46,7 +46,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onViewD
       <div className="p-8 flex flex-col flex-1">
         <div className="flex justify-between items-start mb-6">
           <h3 className="text-2xl font-bold text-[var(--text-primary)] font-heading leading-tight uppercase italic">{product.name}</h3>
-          <div className="text-xl font-black text-[var(--accent-solid)] tracking-tighter">${product.price}</div>
+          <div className="text-xl font-black text-[var(--accent-solid)] tracking-tighter">₹{product.price}</div>
         </div>
         
         <p className="text-[var(--text-secondary)] text-sm font-light mb-10 leading-relaxed min-h-[48px]">
@@ -67,7 +67,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onViewD
           onClick={() => onAddToCart(product)}
           className="mt-auto group relative w-full bg-[var(--text-primary)] text-[var(--bg-primary)] font-black py-5 rounded-2xl transition-all hover:bg-[#00f3ff] hover:text-black flex items-center justify-center gap-4 uppercase text-[10px] tracking-[0.4em] shadow-xl overflow-hidden active:scale-95"
         >
-          <span className="relative z-10">Add to Queue</span>
+          <span className="relative z-10">Add to Cart</span>
           <div className="absolute inset-0 bg-[#00f3ff] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-expo"></div>
         </button>
         

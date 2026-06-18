@@ -1,4 +1,4 @@
-import { Product, Service, BlogPost, VisionSection, SearchableItem, Page, Milestone, Partner, Testimonial } from '@/types';
+import { Product, Service, BlogPost, VisionSection, SearchableItem, Page, Milestone, Partner, Testimonial, FaqCategory } from '@/types';
 import product2Zone from '@/assets/images/products/2ZONE-COVER-IMAGE-600x600.jpg';
 import product4Zone from '@/assets/images/products/4ZONE-COVER-IMAGE-600x600.jpg';
 import product6Zone from '@/assets/images/products/6ZONE-COVER-IMAGE-600x600.jpg';
@@ -7,7 +7,7 @@ import product6Zone from '@/assets/images/products/6ZONE-COVER-IMAGE-600x600.jpg
 export const AUTO_PLAY_DURATION = 5000;
 
 // Navigation items
-export const NAV_ITEMS = ['Home', 'Products', 'About Us', 'Blog'];
+export const NAV_ITEMS = ['Home', 'Products', 'About Us', 'FAQ', 'Blog'];
 
 // Company Information
 export const COMPANY_INFO = {
@@ -320,9 +320,9 @@ export const SEARCHABLE_CONTENT: SearchableItem[] = [
   { title: 'About Us', description: 'Learn about Nelbac and our mission', category: 'page', targetPage: Page.AboutUs },
   { title: 'Cart', description: 'View your shopping cart', category: 'page', targetPage: Page.Cart },
   // Products
-  { title: 'NBGATV3.2', description: 'Two Zone irrigation controller for residential & light commercial - $149', category: 'product', targetPage: Page.Products },
-  { title: 'NBGATV3.4', description: 'Four Zone irrigation controller for hydroponics & aquaponics - $199', category: 'product', targetPage: Page.Products },
-  { title: 'NBGATV3.6', description: 'Six Zone irrigation controller for small/marginal farms - $249', category: 'product', targetPage: Page.Products },
+  { title: 'NBGATV3.2', description: 'Two Zone irrigation controller for residential & light commercial - ₹149', category: 'product', targetPage: Page.Products },
+  { title: 'NBGATV3.4', description: 'Four Zone irrigation controller for hydroponics & aquaponics - ₹199', category: 'product', targetPage: Page.Products },
+  { title: 'NBGATV3.6', description: 'Six Zone irrigation controller for small/marginal farms - ₹249', category: 'product', targetPage: Page.Products },
   // Features
   { title: 'Two Zone Control', description: 'Perfect for residential gardens and lawns', category: 'feature', targetPage: Page.Products },
   { title: 'Four Zone Control', description: 'Individual duration settings per zone', category: 'feature', targetPage: Page.Products },
@@ -336,4 +336,120 @@ export const SEARCHABLE_CONTENT: SearchableItem[] = [
   { title: 'Our Mission', description: 'Make farm automation aspirational for small holders', category: 'feature', targetPage: Page.AboutUs },
   { title: 'Award Winning', description: 'Recognized at Pitch Perfect (IIT Bombay), IITB Eureka 2021, and RKVY RAFTAR Grant recipient', category: 'feature', targetPage: Page.AboutUs },
   { title: 'Bangalore', description: 'Nelbac headquarters location', category: 'feature', targetPage: Page.AboutUs },
+  { title: 'FAQ', description: 'Answers about products, orders, delivery and accounts', category: 'page', targetPage: Page.FAQ },
+];
+
+// Frequently asked questions — sourced from product specs, delivery/payment
+// flows, account features and company info.
+export const FAQS: FaqCategory[] = [
+  {
+    category: 'Products & Hardware',
+    icon: 'fa-microchip',
+    items: [
+      {
+        q: 'Which controllers does Nelbac offer?',
+        a: 'Three automation controllers: the NBGATV3.2 (2 zones, ₹149) for residential gardens and light commercial use, the NBGATV3.4 (4 zones, ₹199) ideal for residential, hydroponics and aquaponics, and the NBGATV3.6 (6 zones, ₹249) built for small and marginal farms.',
+      },
+      {
+        q: 'How do I choose the right number of zones?',
+        a: 'Each zone controls an independent valve/area with its own watering duration. Pick 2 zones for a home garden or lawn, 4 zones for larger residential or hydroponic/aquaponic setups, and 6 zones for farms and bigger installations.',
+      },
+      {
+        q: 'Are the controllers weatherproof?',
+        a: 'Yes. Every controller ships in an IP65-rated enclosure rated for both indoor and outdoor mounting, and installs in under 30 minutes with the quick-connect terminal system.',
+      },
+      {
+        q: 'What happens during a power outage?',
+        a: 'Our proprietary EEPROM-based memory keeps your irrigation schedules intact through outages. When power returns, the controller automatically resumes exactly where it left off — no reprogramming and no missed cycles.',
+      },
+      {
+        q: 'Which valves and pumps are supported?',
+        a: 'The controllers work with standard AC solenoid valves and DC latch valves, and support direct water-pump control through a built-in relay with protection.',
+      },
+      {
+        q: 'Is there a warranty?',
+        a: 'Yes — all controllers come with a 2-year warranty.',
+      },
+    ],
+  },
+  {
+    category: 'Orders & Payment',
+    icon: 'fa-credit-card',
+    items: [
+      {
+        q: 'How do I place an order?',
+        a: 'Add a controller to your cart, open the cart and select Checkout. After signing in, choose a shipping address and payment method, then place the order. You can review it anytime under My Account → My Orders.',
+      },
+      {
+        q: 'What payment methods are accepted?',
+        a: 'Cash on Delivery (where serviceable) and Online / Bank Transfer. For online payments our team shares a secure payment link after the order is placed.',
+      },
+      {
+        q: 'Can I use a coupon code?',
+        a: 'Yes. Enter your coupon at checkout and the discount is validated and applied to your order total before you confirm.',
+      },
+      {
+        q: 'Can I cancel an order?',
+        a: 'Orders can be cancelled while they are still Pending or Confirmed. Open My Account → My Orders, expand the order and choose Cancel Order. Stock is automatically restored.',
+      },
+    ],
+  },
+  {
+    category: 'Delivery',
+    icon: 'fa-truck-fast',
+    items: [
+      {
+        q: 'Do you deliver to my area?',
+        a: 'Enter your pincode in the “Check Delivery” box on any product page, or at checkout, to instantly see availability, estimated delivery time and any delivery charge for your location.',
+      },
+      {
+        q: 'How long does delivery take?',
+        a: 'Estimated delivery is typically 5–7 business days, though the exact timeframe depends on your pincode and is shown when you run the delivery check.',
+      },
+      {
+        q: 'Are there delivery charges?',
+        a: 'Delivery charges vary by location and are shown during the pincode check. Many areas qualify for free delivery above a minimum order value.',
+      },
+      {
+        q: 'Is Cash on Delivery available everywhere?',
+        a: 'COD is available for serviceable pincodes. The delivery check tells you whether COD is supported for your address before you order.',
+      },
+    ],
+  },
+  {
+    category: 'Account & Support',
+    icon: 'fa-user-shield',
+    items: [
+      {
+        q: 'Do I need an account to buy?',
+        a: 'You can browse and build your cart freely, but an account is required at checkout so we can manage your order, addresses and order history securely.',
+      },
+      {
+        q: 'How do I sign in?',
+        a: 'Sign in with your email/username and password, or use “Continue with Google”. New customers can register in seconds from the same window.',
+      },
+      {
+        q: 'How do I manage my addresses?',
+        a: 'Go to My Account → Addresses to add, edit, delete or set a default shipping address. You can also check delivery serviceability for a pincode while adding an address.',
+      },
+      {
+        q: 'I forgot my password — what do I do?',
+        a: 'On the sign-in screen choose “Forgot password?” and enter your account email. We’ll send a reset link if an account exists for that address.',
+      },
+    ],
+  },
+  {
+    category: 'About Nelbac',
+    icon: 'fa-building',
+    items: [
+      {
+        q: 'Where is Nelbac based?',
+        a: 'Nelbac is a technology startup founded in 2020 and headquartered in Bangalore, India.',
+      },
+      {
+        q: 'What does Nelbac do?',
+        a: 'We develop next-generation automation controllers for small and marginal farms, urban and vertical home gardens, hydroponics and aquaponics — making farm automation aspirational and accessible for small holders.',
+      },
+    ],
+  },
 ];

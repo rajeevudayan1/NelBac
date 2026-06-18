@@ -41,17 +41,11 @@ const Hero: React.FC<HeroProps> = ({ onExplore }) => {
             </p>
             
             <div className="flex flex-col sm:flex-row items-center gap-8">
-              <button 
+              <button
                 onClick={() => onExplore(Page.Products)}
                 className="group relative w-full sm:w-auto px-14 py-7 bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-full font-black text-xs uppercase tracking-[0.3em] transition-all hover:bg-[#00f3ff] hover:text-black hover:scale-105 active:scale-95 shadow-xl"
               >
                 Start Deployment
-              </button>
-              <button 
-                onClick={() => onExplore(Page.Services)}
-                className="group w-full sm:w-auto flex items-center justify-center gap-4 px-14 py-7 glass rounded-full font-black text-xs uppercase tracking-[0.3em] text-[var(--text-primary)] border border-[var(--border-primary)] hover:border-[#00f3ff]/50 transition-all"
-              >
-                Services <i className="fas fa-arrow-right text-[10px] group-hover:translate-x-3 transition-transform"></i>
               </button>
             </div>
           </div>

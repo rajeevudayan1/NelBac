@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Product, Page } from '@/types';
 import { PRODUCTS } from '@/constants';
+import DeliveryChecker from '@/components/ui/DeliveryChecker';
 import heroVideo from '@/assets/images/products/nelbac1.mp4';
 import powerFailureImg from '@/assets/images/products/power_failure_recovery.jpg';
 import installationImg from '@/assets/images/products/installation.jpg';
@@ -292,7 +293,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onAddToCart, o
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-12">
                 <div>
                   <span className="text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.3em] block mb-2">Unit Price</span>
-                  <span className="text-5xl md:text-6xl font-black font-heading text-[var(--text-primary)] italic tracking-tighter">${product.price}</span>
+                  <span className="text-5xl md:text-6xl font-black font-heading text-[var(--text-primary)] italic tracking-tighter">₹{product.price}</span>
                 </div>
                 
                 <div className="flex items-center gap-4 sm:ml-8">
@@ -327,6 +328,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onAddToCart, o
                     <div className="absolute inset-0 bg-[var(--accent-solid)] translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
                   </button>
                 </div>
+              </div>
+
+              {/* Delivery Check */}
+              <div className="mb-12 max-w-md">
+                <DeliveryChecker orderValue={product.price * quantity} />
               </div>
 
               {/* Quick Stats Row */}
@@ -559,7 +565,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onAddToCart, o
                     }}
                     className="interactive group relative px-8 py-4 bg-[var(--text-primary)] text-[var(--bg-primary)] font-black uppercase tracking-[0.3em] text-[10px] rounded-2xl hover:bg-[var(--accent-solid)] hover:text-black transition-all shadow-xl active:scale-95 overflow-hidden"
                   >
-                    <span className="relative z-10">Pre Order</span>
+                    <span className="relative z-10">Order Now</span>
                     <div className="absolute inset-0 bg-[var(--accent-solid)] translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
                   </button>
                   <button 
@@ -611,7 +617,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onAddToCart, o
               <div className="inline-flex items-baseline gap-4 glass rounded-2xl px-8 py-5 border border-[var(--accent-solid)]/20 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-solid)]/10 rounded-full blur-[50px]"></div>
                 <span className="text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.3em]">From</span>
-                <span className="text-4xl md:text-5xl font-black font-heading text-[var(--text-primary)] italic tracking-tighter relative">${product.price}</span>
+                <span className="text-4xl md:text-5xl font-black font-heading text-[var(--text-primary)] italic tracking-tighter relative">₹{product.price}</span>
                 <span className="text-[var(--text-secondary)] text-xs font-light">/unit</span>
               </div>
             </div>
@@ -686,7 +692,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onAddToCart, o
             >
               <span className="relative z-10 flex items-center gap-3">
                 <i className="fas fa-cart-plus"></i>
-                Pre Order Now
+                Order Now
               </span>
               <div className="absolute inset-0 bg-[var(--accent-solid)] translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
             </button>
@@ -819,7 +825,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onAddToCart, o
                     <h3 className="text-2xl md:text-3xl font-black font-heading text-white uppercase italic tracking-tight mb-2">{rp.name}</h3>
                     <p className="text-white/60 text-sm font-light mb-4">{rp.tagline}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-2xl font-black font-heading text-[var(--accent-solid)] italic">${rp.price}</span>
+                      <span className="text-2xl font-black font-heading text-[var(--accent-solid)] italic">₹{rp.price}</span>
                       <span className="interactive text-[9px] font-black uppercase tracking-[0.3em] text-white/80 group-hover:text-[var(--accent-solid)] transition-colors flex items-center gap-2">
                         View Details <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                       </span>

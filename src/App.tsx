@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Page, Product, CartItem } from '@/types';
 import { PRODUCTS, VISION_SECTIONS, AUTO_PLAY_DURATION, TESTIMONIALS } from '@/constants.ts';
-import { Header, Footer, Hero, ProductCard, CustomCursor, SplashScreen, AboutUs, ProductDetails } from '@/components';
+import { Header, Footer, Hero, ProductCard, CustomCursor, SplashScreen, AboutUs, ProductDetails, AuthModal, Checkout, Account, FAQ } from '@/components';
 import { useCustomCursor } from '@/hooks/useCustomCursor';
+import { useAuth } from '@/context/AuthContext';
 
 const App: React.FC = () => {
+  const { requireAuth } = useAuth();
   const [showSplash, setShowSplash] = useState(true);
   const [currentPage, setCurrentPage] = useState<Page>(Page.Home);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -344,7 +346,7 @@ const App: React.FC = () => {
           <div className="text-center mb-16 md:mb-24">
             <span className="inline-flex items-center gap-3 px-6 py-3 glass rounded-full border border-[var(--border-primary)] text-[var(--accent-solid)] font-black text-[9px] md:text-[10px] tracking-[0.4em] uppercase mb-8">
               <span className="w-2 h-2 rounded-full bg-[#00f3ff] animate-pulse"></span>
-              TRUSTED_WORLDWIDE
+              TRUSTED WORLDWIDE
             </span>
             <h2 className="text-4xl md:text-7xl lg:text-8xl font-black font-heading text-[var(--text-primary)] uppercase italic tracking-tighter mb-6">
               What Our<br />
@@ -441,7 +443,7 @@ const App: React.FC = () => {
               onClick={(e) => { e.preventDefault(); setCurrentPage(Page.Products); }}
               className="glow-link text-[9px] md:text-[11px] font-black uppercase tracking-[0.3em] md:tracking-[0.5em] text-[var(--text-secondary)] hover:text-[var(--accent-solid)] transition-all ml-4"
             >
-              REQUEST_SCHEMATICS
+              REQUEST SCHEMATICS
             </a>
           </div>
           
@@ -472,7 +474,7 @@ const App: React.FC = () => {
 
   const renderCart = () => (
     <div className="pt-48 max-w-5xl mx-auto px-8 min-h-screen">
-       <h2 className="text-7xl font-black font-heading text-[var(--text-primary)] mb-20 uppercase italic leading-none tracking-tighter">THE QUEUE.</h2>
+       <h2 className="text-7xl font-black font-heading text-[var(--text-primary)] mb-20 uppercase italic leading-none tracking-tighter">THE CART.</h2>
        {cart.length === 0 ? (
          <div className="glass p-32 text-center rounded-[3rem] border-dashed border-[var(--border-primary)]">
            <p className="text-[var(--text-secondary)] uppercase font-black tracking-[0.8em] text-[10px] mb-8">NO ACTIVE NODES DETECTED IN BUFFER.</p>
@@ -492,7 +494,7 @@ const App: React.FC = () => {
                   <img src={item.product.image} className="w-24 h-24 rounded-[1.5rem] object-cover grayscale opacity-60" alt="" />
                   <div>
                     <h4 className="text-2xl font-black text-[var(--text-primary)] uppercase font-heading tracking-tight italic">{item.product.name}</h4>
-                    <p className="text-[var(--accent-solid)] text-[11px] font-black uppercase tracking-widest mt-3">UNIT_COST: ${item.product.price}</p>
+                    <p className="text-[var(--accent-solid)] text-[11px] font-black uppercase tracking-widest mt-3">UNIT PRICE: ₹{item.product.price}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-12 mt-8 md:mt-0">
@@ -501,16 +503,16 @@ const App: React.FC = () => {
                       <span className="font-black text-[var(--text-primary)] text-lg font-mono">{item.quantity}</span>
                       <button onClick={() => updateQuantity(item.product.id, 1)} className="interactive text-[var(--text-secondary)] hover:text-[var(--text-primary)]"><i className="fas fa-plus text-xs"></i></button>
                    </div>
-                   <div className="text-right min-w-[140px] font-black text-[var(--accent-solid)] text-3xl font-heading tracking-tighter italic">${(item.product.price * item.quantity).toFixed(2)}</div>
+                   <div className="text-right min-w-[140px] font-black text-[var(--accent-solid)] text-3xl font-heading tracking-tighter italic">₹{(item.product.price * item.quantity).toFixed(2)}</div>
                 </div>
               </div>
            ))}
            <div className="glass p-16 rounded-[3rem] mt-20 border border-[var(--accent-solid)]/20">
               <div className="flex justify-between items-center mb-12">
-                 <span className="text-[var(--text-secondary)] uppercase font-black tracking-[0.8em] text-[11px]">TOTAL_ALLOCATION</span>
-                 <span className="text-6xl font-black text-[var(--text-primary)] font-heading tracking-tighter italic">${cartTotal.toFixed(2)}</span>
+                 <span className="text-[var(--text-secondary)] uppercase font-black tracking-[0.8em] text-[11px]">TOTAL</span>
+                 <span className="text-6xl font-black text-[var(--text-primary)] font-heading tracking-tighter italic">₹{cartTotal.toFixed(2)}</span>
               </div>
-              <button onClick={() => alert("INITIALIZING DEPLOYMENT SEQUENCE...")} className="w-full py-10 bg-[var(--text-primary)] text-[var(--bg-primary)] font-black uppercase tracking-[0.8em] text-[12px] rounded-2xl hover:bg-[#00f3ff] transition-all shadow-2xl">EXECUTE_DEPLOYMENT_CMD</button>
+              <button onClick={() => requireAuth(() => setCurrentPage(Page.Checkout))} className="w-full py-10 bg-[var(--text-primary)] text-[var(--bg-primary)] font-black uppercase tracking-[0.8em] text-[12px] rounded-2xl hover:bg-[#00f3ff] transition-all shadow-2xl">CHECKOUT</button>
            </div>
          </div>
        )}
@@ -525,6 +527,7 @@ const App: React.FC = () => {
         />
       )}
       <CustomCursor isHovering={isHoveringInteractive} position={cursorPosition} />
+      <AuthModal />
       <Header currentPage={currentPage} setCurrentPage={setCurrentPage} cartCount={cartCount} />
       <main>
         {currentPage === Page.Home && renderHome()}
@@ -539,6 +542,15 @@ const App: React.FC = () => {
         )}
         {currentPage === Page.AboutUs && <AboutUs onNavigate={setCurrentPage} />}
         {currentPage === Page.Cart && renderCart()}
+        {currentPage === Page.Checkout && (
+          <Checkout
+            cart={cart}
+            onOrderPlaced={() => setCart([])}
+            onNavigate={setCurrentPage}
+          />
+        )}
+        {currentPage === Page.Account && <Account onNavigate={setCurrentPage} />}
+        {currentPage === Page.FAQ && <FAQ onNavigate={setCurrentPage} />}
       </main>
       
       <Footer />

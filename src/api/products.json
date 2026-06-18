@@ -1,0 +1,474 @@
+{
+  "status": "success",
+  "message": "Products retrieved successfully",
+  "timestamp": "2026-02-20T00:00:00.000Z",
+  "data": {
+    "products": [
+      {
+        "id": "nbgatv3-2",
+        "name": "NBGATV3.2",
+        "slug": "nbgatv3-2",
+        "tagline": "Two Zone Irrigation Controller",
+        "category": "Controller",
+        "price": {
+          "amount": 149.00,
+          "currency": "USD",
+          "formatted": "$149.00"
+        },
+        "availability": {
+          "inStock": true,
+          "status": "available",
+          "estimatedDelivery": "5-7 business days"
+        },
+        "description": {
+          "short": "Two Zone irrigation controller with one solenoid valve. Perfect for residential gardens, lawns, rooftop gardens, and light commercial applications.",
+          "long": "The NBGATV3.2 is Nelbac's entry-level automation controller designed specifically for residential and light commercial irrigation needs. With two independently controllable zones, it provides smart scheduling, power failure recovery, and flexible manual operation — all in a compact, weather-resistant enclosure."
+        },
+        "media": {
+          "thumbnail": "/assets/images/products/2ZONE-COVER-IMAGE-600x600.jpg",
+          "images": [
+            {
+              "url": "/assets/images/products/2ZONE-COVER-IMAGE-600x600.jpg",
+              "alt": "NBGATV3.2 Two Zone Controller - Front View",
+              "type": "product"
+            },
+            {
+              "url": "/assets/images/products/power_failure_recovery.jpg",
+              "alt": "Power Failure Recovery Feature",
+              "type": "feature"
+            },
+            {
+              "url": "/assets/images/products/installation.jpg",
+              "alt": "Easy Installation Process",
+              "type": "feature"
+            }
+          ],
+          "video": {
+            "url": "https://player.vimeo.com/external/494252666.sd.mp4?s=727e335431665a3c00445d44745c928b52f6f195&profile_id=164",
+            "type": "mp4",
+            "provider": "vimeo"
+          },
+          "gallery": [
+            "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&q=80&w=800",
+            "/assets/images/products/power_failure_recovery.jpg",
+            "/assets/images/products/installation.jpg"
+          ]
+        },
+        "highlights": [
+          { "label": "Zones", "value": "2", "icon": "fa-layer-group" },
+          { "label": "Memory", "value": "EEPROM", "icon": "fa-microchip" },
+          { "label": "Power", "value": "12V DC", "icon": "fa-bolt" },
+          { "label": "Warranty", "value": "2 Years", "icon": "fa-shield-halved" }
+        ],
+        "features": {
+          "summary": [
+            "2 Station Models – Perfect for residential",
+            "Supports 2 valves and/or water pump",
+            "Memory saves program during power outages",
+            "Flexible Manual Operation"
+          ],
+          "detailed": [
+            {
+              "title": "Smart Zone Management",
+              "subtitle": "Intelligent control for every corner.",
+              "description": "Manage two independent irrigation zones with customized schedules and durations. Set different watering times for each zone based on plant type, soil conditions, and sunlight exposure. The controller automatically sequences between zones for optimal water distribution.",
+              "image": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&q=80&w=1200"
+            },
+            {
+              "title": "Power Failure Recovery",
+              "subtitle": "Never miss a watering cycle.",
+              "description": "Our proprietary EEPROM-based memory system ensures your irrigation schedules persist through power outages. When power returns, the controller automatically resumes operations exactly where it left off — no reprogramming needed, no missed cycles, no wasted water.",
+              "image": "/assets/images/products/power_failure_recovery.jpg"
+            },
+            {
+              "title": "Flexible Installation",
+              "subtitle": "Built for Indian conditions.",
+              "description": "Designed with an IP65-rated enclosure for indoor and outdoor mounting. Compatible with standard AC solenoid valves and DC latch valves. Supports direct water pump control with built-in relay protection. Installation takes under 30 minutes with our quick-connect terminal system.",
+              "image": "/assets/images/products/installation.jpg"
+            }
+          ]
+        },
+        "specifications": {
+          "overview": {
+            "Zones": "2 Stations",
+            "Applications": "Residential & Light Commercial",
+            "Environment": "Indoor/Outdoor",
+            "Water Source": "Pump & Tank Support"
+          },
+          "technical": [
+            { "label": "Dimensions", "value": "160 mm × 100 mm × 45 mm", "icon": "fa-ruler-combined" },
+            { "label": "Operating Voltage", "value": "12V DC / 24V AC", "icon": "fa-plug-circle-bolt" },
+            { "label": "Weight", "value": "320g", "icon": "fa-weight-hanging" },
+            { "label": "Processor", "value": "ATmega328P Microcontroller", "icon": "fa-microchip" },
+            { "label": "Memory", "value": "EEPROM Non-Volatile Storage", "icon": "fa-memory" },
+            { "label": "Valve Support", "value": "AC Solenoid / DC Latch", "icon": "fa-faucet-drip" },
+            { "label": "Enclosure Rating", "value": "IP65 Weather Resistant", "icon": "fa-droplet-slash" },
+            { "label": "Display", "value": "LED Status Indicators", "icon": "fa-display" }
+          ]
+        },
+        "seo": {
+          "metaTitle": "NBGATV3.2 - Two Zone Irrigation Controller | Nelbac",
+          "metaDescription": "Two Zone irrigation controller with EEPROM memory, power failure recovery, and flexible installation. Perfect for residential gardens and light commercial applications.",
+          "keywords": ["irrigation controller", "2 zone", "residential", "smart irrigation", "automation", "Nelbac"]
+        }
+      },
+      {
+        "id": "nbgatv3-4",
+        "name": "NBGATV3.4",
+        "slug": "nbgatv3-4",
+        "tagline": "Four Zone Irrigation Controller",
+        "category": "Controller",
+        "price": {
+          "amount": 199.00,
+          "currency": "USD",
+          "formatted": "$199.00"
+        },
+        "availability": {
+          "inStock": true,
+          "status": "available",
+          "estimatedDelivery": "5-7 business days"
+        },
+        "description": {
+          "short": "Four Zone irrigation controller with one solenoid valve. Different duration can be set for each zone based on plant type, emitters, water pressure, and flow rate.",
+          "long": "The NBGATV3.4 is Nelbac's mid-range automation controller built for users who need granular control over multiple irrigation zones. With four independently configurable zones, per-zone duration settings, and hydroponics-ready precision, it bridges the gap between residential simplicity and commercial capability."
+        },
+        "media": {
+          "thumbnail": "/assets/images/products/4ZONE-COVER-IMAGE-600x600.jpg",
+          "images": [
+            {
+              "url": "/assets/images/products/4ZONE-COVER-IMAGE-600x600.jpg",
+              "alt": "NBGATV3.4 Four Zone Controller - Front View",
+              "type": "product"
+            }
+          ],
+          "video": null,
+          "gallery": [
+            "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800"
+          ]
+        },
+        "highlights": [
+          { "label": "Zones", "value": "4", "icon": "fa-layer-group" },
+          { "label": "Memory", "value": "EEPROM", "icon": "fa-microchip" },
+          { "label": "Power", "value": "12V DC", "icon": "fa-bolt" },
+          { "label": "Warranty", "value": "2 Years", "icon": "fa-shield-halved" }
+        ],
+        "features": {
+          "summary": [
+            "4 Station Models – Perfect for residential",
+            "Supports 4 valves and/or water pump",
+            "Individual zone duration settings",
+            "Memory saves program during power outages"
+          ],
+          "detailed": [
+            {
+              "title": "Per-Zone Duration Control",
+              "subtitle": "Precision for every plant type.",
+              "description": "Set individual watering durations for each of the four zones based on your specific plant requirements, emitter types, water pressure, and flow rate. From delicate flowers to hardy shrubs — every zone gets exactly what it needs, nothing more, nothing less.",
+              "image": "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?auto=format&fit=crop&q=80&w=1200"
+            },
+            {
+              "title": "Hydroponics Ready",
+              "subtitle": "Engineered for soilless growing.",
+              "description": "Purpose-built timing precision makes the NBGATV3.4 ideal for hydroponic and aquaponic setups. Control nutrient delivery, drainage cycles, and flood-and-drain sequences with second-level accuracy. The four independent zones let you manage different growth stages simultaneously.",
+              "image": "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&q=80&w=1200"
+            },
+            {
+              "title": "Robust Memory System",
+              "subtitle": "Set once. Run forever.",
+              "description": "Advanced non-volatile EEPROM storage retains all programming through unlimited power cycles. Your schedules, zone configurations, and custom settings survive everything — from planned maintenance shutdowns to unexpected outages. The system resumes autonomously without any user intervention.",
+              "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1200"
+            }
+          ]
+        },
+        "specifications": {
+          "overview": {
+            "Zones": "4 Stations",
+            "Applications": "Residential, Hydroponics, Aquaponics",
+            "Environment": "Indoor/Outdoor",
+            "Water Source": "Pump & Tank Support"
+          },
+          "technical": [
+            { "label": "Dimensions", "value": "200 mm × 120 mm × 50 mm", "icon": "fa-ruler-combined" },
+            { "label": "Operating Voltage", "value": "12V DC / 24V AC", "icon": "fa-plug-circle-bolt" },
+            { "label": "Weight", "value": "450g", "icon": "fa-weight-hanging" },
+            { "label": "Processor", "value": "ATmega2560 Microcontroller", "icon": "fa-microchip" },
+            { "label": "Memory", "value": "EEPROM Non-Volatile Storage", "icon": "fa-memory" },
+            { "label": "Valve Support", "value": "AC Solenoid / DC Latch", "icon": "fa-faucet-drip" },
+            { "label": "Enclosure Rating", "value": "IP65 Weather Resistant", "icon": "fa-droplet-slash" },
+            { "label": "Display", "value": "LCD with Backlight", "icon": "fa-display" }
+          ]
+        },
+        "seo": {
+          "metaTitle": "NBGATV3.4 - Four Zone Irrigation Controller | Nelbac",
+          "metaDescription": "Four Zone irrigation controller with per-zone duration control, hydroponics support, and robust EEPROM memory. Ideal for residential, hydroponics, and aquaponics.",
+          "keywords": ["irrigation controller", "4 zone", "hydroponics", "aquaponics", "smart irrigation", "Nelbac"]
+        }
+      },
+      {
+        "id": "nbgatv3-6",
+        "name": "NBGATV3.6",
+        "slug": "nbgatv3-6",
+        "tagline": "Six Zone Irrigation Controller",
+        "category": "Controller",
+        "price": {
+          "amount": 249.00,
+          "currency": "USD",
+          "formatted": "$249.00"
+        },
+        "availability": {
+          "inStock": true,
+          "status": "available",
+          "estimatedDelivery": "5-7 business days"
+        },
+        "description": {
+          "short": "Six Zone irrigation controller with one solenoid valve. Different duration can be set for each zone based on plant type, emitters, water pressure, and flow rate. Ideal for small/marginal farms.",
+          "long": "The NBGATV3.6 is Nelbac's flagship automation controller designed for farm-scale operations. Featuring six independently configurable zones, an ESP32 dual-core processor with Wi-Fi and Bluetooth, IP67 weather resistance, and OTA firmware updates — it delivers industrial reliability with future-ready IoT connectivity."
+        },
+        "media": {
+          "thumbnail": "/assets/images/products/6ZONE-COVER-IMAGE-600x600.jpg",
+          "images": [
+            {
+              "url": "/assets/images/products/6ZONE-COVER-IMAGE-600x600.jpg",
+              "alt": "NBGATV3.6 Six Zone Controller - Front View",
+              "type": "product"
+            }
+          ],
+          "video": null,
+          "gallery": [
+            "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800"
+          ]
+        },
+        "highlights": [
+          { "label": "Zones", "value": "6", "icon": "fa-layer-group" },
+          { "label": "Memory", "value": "EEPROM", "icon": "fa-microchip" },
+          { "label": "Power", "value": "24V AC", "icon": "fa-bolt" },
+          { "label": "Warranty", "value": "3 Years", "icon": "fa-shield-halved" }
+        ],
+        "features": {
+          "summary": [
+            "6 Station Models – Perfect for farms",
+            "Supports 6 valves and/or water pump",
+            "Individual zone duration settings",
+            "Memory saves program during power outages"
+          ],
+          "detailed": [
+            {
+              "title": "Farm-Scale Automation",
+              "subtitle": "From smallholdings to commercial plots.",
+              "description": "Six independently configurable zones cover up to 2 acres of mixed cultivation. Assign different crop types to different zones with unique watering schedules, durations, and frequencies. The sequential zone activation prevents pressure drops and ensures consistent coverage across your entire operation.",
+              "image": "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1200"
+            },
+            {
+              "title": "Industrial Reliability",
+              "subtitle": "Built to outlast harsh conditions.",
+              "description": "Military-grade IP67 enclosure withstands dust storms, heavy rainfall, and temperature extremes from -10°C to 55°C. Surge-protected inputs handle voltage spikes common in rural power grids. Stainless steel terminal blocks resist corrosion in high-humidity environments.",
+              "image": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&q=80&w=1200"
+            },
+            {
+              "title": "Future-Ready Connectivity",
+              "subtitle": "IoT integration at its core.",
+              "description": "Powered by the ESP32 dual-core processor with built-in Wi-Fi and Bluetooth capabilities. Access real-time zone status, modify schedules remotely, and receive alerts for anomalies. OTA firmware updates ensure your controller evolves with new features — without a single farm visit.",
+              "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1200"
+            }
+          ]
+        },
+        "specifications": {
+          "overview": {
+            "Zones": "6 Stations",
+            "Applications": "Farms, Hydroponics, Aquaponics",
+            "Environment": "Indoor/Outdoor",
+            "Water Source": "Pump & Tank Support"
+          },
+          "technical": [
+            { "label": "Dimensions", "value": "240 mm × 140 mm × 55 mm", "icon": "fa-ruler-combined" },
+            { "label": "Operating Voltage", "value": "12V DC / 24V AC", "icon": "fa-plug-circle-bolt" },
+            { "label": "Weight", "value": "580g", "icon": "fa-weight-hanging" },
+            { "label": "Processor", "value": "ESP32 Dual-Core Microcontroller", "icon": "fa-microchip" },
+            { "label": "Memory", "value": "EEPROM + Flash Storage", "icon": "fa-memory" },
+            { "label": "Valve Support", "value": "AC Solenoid / DC Latch", "icon": "fa-faucet-drip" },
+            { "label": "Enclosure Rating", "value": "IP67 Weather Resistant", "icon": "fa-droplet-slash" },
+            { "label": "Display", "value": "LCD with Backlight", "icon": "fa-display" }
+          ]
+        },
+        "seo": {
+          "metaTitle": "NBGATV3.6 - Six Zone Irrigation Controller | Nelbac",
+          "metaDescription": "Six Zone irrigation controller with ESP32 IoT connectivity, IP67 weather resistance, and farm-scale automation. Ideal for small farms and commercial applications.",
+          "keywords": ["irrigation controller", "6 zone", "farm automation", "IoT", "ESP32", "smart farming", "Nelbac"]
+        }
+      }
+    ],
+    "company": {
+      "name": "Nelbac",
+      "tagline": "Automate Anything.",
+      "founded": "2020",
+      "location": "Bangalore, India",
+      "description": "Nelbac is a Bangalore-based emerging technology startup focused on developing next-generation automation controllers for landscape designers, homeowners, property owners, and agricultural customers.",
+      "mission": "Make the farm automation technologies aspirational for small holders to take up agriculture as a business.",
+      "whoWeAre": "A team of engineers aiming to find solutions for small/marginal farm, landscaping and home garden automation.",
+      "whatWeDo": "Our focus is on developing automation devices for small/marginal farms, urban home gardens, vertical gardens, hydroponics and aquaponics.",
+      "stats": [
+        { "value": "2020", "label": "Founded", "suffix": "" },
+        { "value": "5+", "label": "Years Experience", "suffix": "" },
+        { "value": "1000+", "label": "Devices Deployed", "suffix": "" },
+        { "value": "99.9", "label": "Uptime", "suffix": "%" }
+      ],
+      "values": [
+        {
+          "title": "Innovation",
+          "description": "Pioneering smart irrigation solutions that transform how India farms and gardens.",
+          "icon": "lightbulb"
+        },
+        {
+          "title": "Sustainability",
+          "description": "Every drop counts. Our technology ensures optimal water usage for a greener tomorrow.",
+          "icon": "leaf"
+        },
+        {
+          "title": "Accessibility",
+          "description": "Making advanced automation technology affordable for small and marginal farmers.",
+          "icon": "users"
+        },
+        {
+          "title": "Reliability",
+          "description": "Built for Indian conditions - rugged, dependable, and always operational.",
+          "icon": "shield"
+        }
+      ],
+      "milestones": [
+        {
+          "year": "2020",
+          "title": "Company Founded",
+          "description": "Nelbac incorporated in Bangalore as an emerging technology startup focused on next-generation automation controllers."
+        },
+        {
+          "year": "2021",
+          "title": "Industry Recognition",
+          "description": "Recognized at Pitch Perfect (IIT Bombay) and selected as IITB Eureka Finalist 2021."
+        },
+        {
+          "year": "2022",
+          "title": "RKVY RAFTAR Grant",
+          "description": "Awarded the RKVY RAFTAR Grant from the Government of India for agricultural innovation."
+        },
+        {
+          "year": "2023",
+          "title": "IP & Compliance Milestones",
+          "description": "Published patent (under examination), filed provisional patent, and secured a granted design patent and trademark."
+        },
+        {
+          "year": "2025",
+          "title": "Market Re-entry",
+          "description": "Re-entering the market with an advanced automation controller. Strong early traction with pre-bookings validating product-market fit."
+        }
+      ],
+      "partners": [
+        {
+          "name": "Pitch Perfect (IIT Bombay)",
+          "description": "Recognized at IIT Bombay's startup pitch competition"
+        },
+        {
+          "name": "IITB Eureka",
+          "description": "Finalist at IITB Eureka 2021 — one of India's premier startup competitions"
+        },
+        {
+          "name": "RKVY RAFTAR Grant",
+          "description": "Awarded by the Government of India for agri-tech innovation"
+        },
+        {
+          "name": "Start-up India (DPIIT)",
+          "description": "Department for Promotion of Industry and Internal Trade, Government of India"
+        }
+      ]
+    },
+    "testimonials": [
+      {
+        "id": "test-1",
+        "name": "Rajesh Kumar",
+        "role": "Farm Owner",
+        "company": "Kumar Organic Farms",
+        "location": "Karnataka, India",
+        "content": "The NBGATV3.4 transformed our irrigation system completely. We've reduced water consumption by 40% while our crop yield increased significantly. The automated scheduling is a game-changer for our farm.",
+        "rating": 5
+      },
+      {
+        "id": "test-2",
+        "name": "Priya Sharma",
+        "role": "Landscape Designer",
+        "company": "GreenScape Studios",
+        "location": "Mumbai, India",
+        "content": "As a landscape designer, I recommend Nelbac controllers to all my clients. The reliability and ease of use make it perfect for residential projects. The support team is exceptional!",
+        "rating": 5
+      },
+      {
+        "id": "test-3",
+        "name": "Mohammed Ali",
+        "role": "Operations Manager",
+        "company": "Desert Bloom Nursery",
+        "location": "Dubai, UAE",
+        "content": "We operate in extreme conditions, and the Nelbac controller handles it flawlessly. The memory backup during power outages has saved us multiple times. Highly recommended!",
+        "rating": 5
+      },
+      {
+        "id": "test-4",
+        "name": "Sarah Chen",
+        "role": "Hydroponics Specialist",
+        "company": "Urban Harvest Co.",
+        "location": "Singapore",
+        "content": "The precision control offered by NBGATV3.6 is exactly what our hydroponic setup needed. Different durations for each zone based on plant requirements - brilliant engineering!",
+        "rating": 5
+      },
+      {
+        "id": "test-5",
+        "name": "Anand Patel",
+        "role": "Property Developer",
+        "company": "Patel Constructions",
+        "location": "Gujarat, India",
+        "content": "We've installed Nelbac systems in over 50 residential properties. The build quality and customer satisfaction rate is unmatched. It's now our standard specification for all projects.",
+        "rating": 5
+      },
+      {
+        "id": "test-6",
+        "name": "Lisa Thompson",
+        "role": "Homeowner",
+        "company": "Residential User",
+        "location": "Bangalore, India",
+        "content": "Finally, an irrigation controller that just works! Setup was straightforward, and my rooftop garden has never looked better. The water savings paid for the unit in months.",
+        "rating": 5
+      }
+    ],
+    "services": [
+      {
+        "id": "serv-1",
+        "title": "Precision Consultation",
+        "description": "Expert analysis of your land or facility to design the optimal automation layout.",
+        "icon": "fa-chess-king"
+      },
+      {
+        "id": "serv-2",
+        "title": "Professional Installation",
+        "description": "White-glove deployment by certified Nelbac technicians to ensure zero-downtime integration.",
+        "icon": "fa-tools"
+      },
+      {
+        "id": "serv-3",
+        "title": "Custom Integration",
+        "description": "Tailored software solutions to link Nelbac hardware with your existing enterprise systems.",
+        "icon": "fa-code"
+      }
+    ]
+  },
+  "pagination": {
+    "currentPage": 1,
+    "totalPages": 1,
+    "totalItems": 3,
+    "itemsPerPage": 10
+  },
+  "meta": {
+    "apiVersion": "1.0.0",
+    "responseTime": "45ms"
+  }
+}

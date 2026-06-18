@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Page, SearchableItem } from '@/types';
 import { NAV_ITEMS, SEARCHABLE_CONTENT } from '@/constants.ts';
+import { useAuth } from '@/context/AuthContext';
 import logo from '@/assets/images/nelbac-logo-white.png';
 import nelbacIcon from '@/assets/images/nelbac-icon.png';
 
@@ -20,7 +21,11 @@ const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage, cartCount 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isAccountOpen, setIsAccountOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const accountRef = useRef<HTMLDivElement>(null);
+
+  const { isAuthenticated, user, openAuthModal, logout } = useAuth();
 
   // Build searchable content with actions from constants
   const searchableContent = useMemo<SearchResult[]>(() => 
@@ -52,6 +57,25 @@ const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage, cartCount 
       searchInputRef.current.focus();
     }
   }, [isSearchOpen]);
+
+  // Close the account dropdown when clicking outside of it
+  useEffect(() => {
+    if (!isAccountOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (accountRef.current && !accountRef.current.contains(e.target as Node)) {
+        setIsAccountOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isAccountOpen]);
+
+  const handleLogout = async () => {
+    setIsAccountOpen(false);
+    await logout();
+  };
+
+  const accountLabel = user?.full_name || user?.username || 'Account';
 
   // Close search on escape key
   useEffect(() => {
@@ -163,14 +187,54 @@ const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage, cartCount 
               )}
             </a>
 
-            <a 
-              href="https://app.nelbac.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`hidden sm:block px-4 md:px-6 py-2 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all shadow-xl ${isLight ? 'bg-slate-900 text-white' : 'bg-white text-black hover:bg-[#00f3ff]'}`}
-            >
-              Portal
-            </a>
+            {isAuthenticated ? (
+              <div className="relative" ref={accountRef}>
+                <button
+                  onClick={() => setIsAccountOpen((v) => !v)}
+                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${isLight ? 'bg-slate-100 text-slate-800 hover:bg-slate-200' : 'bg-white/5 text-slate-200 hover:bg-white/10'}`}
+                  title={accountLabel}
+                >
+                  <span className="w-6 h-6 rounded-full bg-[#00f3ff] text-black flex items-center justify-center text-[10px] font-black">
+                    {accountLabel.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="hidden sm:inline max-w-[80px] truncate">{accountLabel}</span>
+                  <i className={`fas fa-chevron-down text-[8px] transition-transform ${isAccountOpen ? 'rotate-180' : ''}`}></i>
+                </button>
+
+                {isAccountOpen && (
+                  <div className={`absolute right-0 mt-3 w-60 rounded-[1.5rem] overflow-hidden border shadow-2xl animate-[slideDown_0.2s_ease-out] ${isLight ? 'bg-white border-slate-200' : 'bg-slate-900 border-white/10'}`}>
+                    <div className={`px-5 py-4 border-b ${isLight ? 'border-slate-100' : 'border-white/10'}`}>
+                      <p className={`text-sm font-black truncate ${isLight ? 'text-slate-900' : 'text-white'}`}>{accountLabel}</p>
+                      <p className={`text-[11px] truncate mt-0.5 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>{user?.email}</p>
+                      {!user?.is_verified && (
+                        <span className="inline-block mt-2 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-500">
+                          Email not verified
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => { setIsAccountOpen(false); setCurrentPage(Page.Account); }}
+                      className={`w-full flex items-center gap-3 px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider transition-all ${isLight ? 'text-slate-600 hover:bg-slate-50' : 'text-slate-300 hover:bg-white/5'}`}
+                    >
+                      <i className="fas fa-user text-[10px] w-4"></i> My Account
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className={`w-full flex items-center gap-3 px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider transition-all text-red-400 ${isLight ? 'hover:bg-red-50' : 'hover:bg-red-500/10'}`}
+                    >
+                      <i className="fas fa-sign-out-alt text-[10px] w-4"></i> Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => openAuthModal('login')}
+                className={`hidden sm:block px-4 md:px-6 py-2 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all shadow-xl ${isLight ? 'bg-slate-900 text-white hover:bg-slate-700' : 'bg-white text-black hover:bg-[#00f3ff]'}`}
+              >
+                Sign In
+              </button>
+            )}
           </div>
         </div>
 
@@ -191,14 +255,29 @@ const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage, cartCount 
                 {item}
               </a>
             ))}
-            <a 
-              href="https://app.nelbac.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`sm:hidden w-full text-left px-6 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.4em] mt-2 ${isLight ? 'bg-slate-900 text-white' : 'bg-white text-black'}`}
-            >
-              System Portal <i className="fas fa-external-link-alt ml-2 text-[8px]"></i>
-            </a>
+            {isAuthenticated ? (
+              <>
+                <button
+                  onClick={() => { setIsMenuOpen(false); setCurrentPage(Page.Account); }}
+                  className={`sm:hidden w-full text-left px-6 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.4em] mt-2 ${isLight ? 'text-slate-600 hover:bg-slate-100' : 'text-slate-400 hover:bg-white/5'}`}
+                >
+                  My Account <i className="fas fa-user ml-2 text-[8px]"></i>
+                </button>
+                <button
+                  onClick={() => { setIsMenuOpen(false); handleLogout(); }}
+                  className={`sm:hidden w-full text-left px-6 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.4em] text-red-400 ${isLight ? 'bg-red-50' : 'bg-red-500/10'}`}
+                >
+                  Sign Out <i className="fas fa-sign-out-alt ml-2 text-[8px]"></i>
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => { setIsMenuOpen(false); openAuthModal('login'); }}
+                className={`sm:hidden w-full text-left px-6 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.4em] mt-2 ${isLight ? 'bg-slate-900 text-white' : 'bg-white text-black'}`}
+              >
+                Sign In <i className="fas fa-arrow-right-to-bracket ml-2 text-[8px]"></i>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -290,7 +369,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage, cartCount 
                   <span className="flex items-center gap-1"><kbd className={`px-1.5 py-0.5 rounded ${isLight ? 'bg-slate-200' : 'bg-white/10'}`}>↵</kbd> Select</span>
                 </div>
                 <span className={`text-[10px] font-black uppercase tracking-widest ${isLight ? 'text-slate-400' : 'text-slate-500'}`}>
-                  NELBAC_SEARCH
+                  NELBAC SEARCH
                 </span>
               </div>
             </div>
